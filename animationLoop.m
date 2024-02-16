@@ -32,8 +32,6 @@ numRuns   = length(TrialSubset);
 critInput = cell(numLayers,1);
 fcnDraw = cell(numLayers,1);
 
-global TrialStartTime;
-
 %Screen data
 %--------------------------------------------------------------------------
 % FIRST CHANGE THE BACKGROUND COLOR in ScreenData!!
@@ -257,26 +255,11 @@ vbl = Screen('Flip', S.wPtr);
 critSecStart = tic;
 
 drawTime = [];
+
 missedFrames = 0;
+
 for k=1:length(frameMatrix)
-    startcam(k,T.pause(z,:),1:length(frameMatrix)); %Starts Video Recording
-    Pauset = T.pause(z,:);
-    if k <= length(1:length(frameMatrix))
-        nPause = Pauset(:,k); % Current trials Pause time in frames
-        if ((nPause == 0) && (k == 1)) % Checks if there is a pause and if it's the first trial
-                %disp('Ran Start');
-                TrialStartTime = datestr(now, 0);
-        end
-        if(k > 1) % Runs if there is more than one trial
-            lPause = Pauset(:,k-1); % Gets previous trial time in frames
-            if((nPause == 0) && (lPause ~= 0)) % Checks if current frame time is 0 and if the last pause time was not 0
-                TrialStartTime = datestr(now, 0);
-            end
-        end
-    end
-% %     temporarily took out
-%     fprintf(' - TRIAL %d starting at %.6f s -\n\n',k,toc(critSecStart));
-    tStamp = toc(critSecStart);
+    fprintf(' - TRIAL %d starting at %.6f s -\n\n',k,toc(critSecStart));
     N = size(frameMatrix{k},2);
     n = 1;
     nd = 0;
@@ -345,7 +328,6 @@ for k=1:length(frameMatrix)
         
         n = n+1+missedFrames;
     end
-    stopcam(k,T.pause(z,:),1:length(frameMatrix),TrialStartTime,tStamp,pathName);
 end
 
 totalStimTime = toc(critSecStart);
@@ -450,82 +432,4 @@ if UserSettings.saveParameters
     disp('---------------------------------------------------------- ');
 else
     disp(['Parameter saving disabled']);
-end
-
-%Written By Chris Johnston - chris.johnstonaus@gmail.com 14/04/21
-function startcam(TRun, Pauset, Tlength) % Function to start recording from webcam (Current Trial Number, trial pause times in frames, list of trials)
-command = 'bash RecordCam.sh &'; % links to bash script that is used to start/stop recording
-if TRun <= length(Tlength)
-    nPause = Pauset(:,TRun); % Current trials Pause time in frames
-    
-    if ((nPause == 0) && (TRun == 1)) % Checks if there is a pause and if it's the first trial
-            %disp('Ran Start');
-            TrialStartTime = datestr(now, 0);
-            [status, cmdOut] = system(command, '-echo'); % Starts Recording
-    end
-    if(TRun > 1) % Runs if there is more than one trial
-        lPause = Pauset(:,TRun-1); % Gets previous trial time in frames
-        if((nPause == 0) && (lPause ~= 0)) % Checks if current frame time is 0 and if the last pause time was not 0
-            %disp('Ran Start Middle');
-            [status, cmdOut] = system(command, '-echo'); % Starts a recording
-            TrialStartTime = datestr(now, 0);
-        end
-    end
-end
-
-
-function stopcam(TRun, Pauset, Tlength,TrialStartTime,tStamp,pathName)% Function to stop recording video from webcam (Current Trial Number, Current trial pause time in frames, list of trials,Time of Stimulus Start, Stimulus Name)
-    command = 'bash RecordCam.sh &';
-    %disp('end record');
-
-if TRun <= length(Tlength) 
-    tStamp = floor(tStamp);
-    if(TRun ~= length(Tlength))
-        nPause = Pauset(:,TRun+1);
-    else
-        nPause = Pauset(:,TRun);
-    end  
-    %disp(nPause);
-    if (nPause ~= 0)
-        clear newVideoName concat finalTime addTime2 timeR timeNum addTime
-        addTime2 = seconds(tStamp);
-        addTime = 5;
-        timeR = TrialStartTime;
-        timeR  = regexprep(timeR, ':', '_');
-        finalTime = timeR;
-        %finalTime = regexprep(timeR, ':', '_');
-        disp('pause is more than 0, Ending Recording');
-        [status, cmdOut] = system(command, '-echo');
-        disp(finalTime);
-        newVideoName=['Video_',finalTime];
-        videopath = strrep(pathName,'parameters','video/');
-        if ~exist(videopath, 'dir')
-               mkdir(videopath); 
-        end
-        concat=[videopath,newVideoName,'.mp4'];
-        concat=regexprep(concat, ':', '_');
-        movefile('./Saved Data/capture.mp4',concat);
-    else
-        %disp('Gets this far');
-        L = length(Tlength);
-        if(TRun == L)
-            clear newVideoName concat finalTime addTime2 timeR timeNum addTime
-            addTime2 = seconds(tStamp);
-            addTime = 5;
-            timeR = TrialStartTime;
-            timeR  = regexprep(timeR, ':', '_');
-            finalTime = timeR;
-            disp('End of Trials, Ending Recording');
-            [status, cmdOut] = system(command, '-echo');
-            %disp(addTime2);
-            newVideoName=['Video_',finalTime];
-            videopath = strrep(pathName,'parameters','video/');
-            if ~exist(videopath, 'dir')
-                   mkdir(videopath); 
-            end
-            concat=[videopath,newVideoName,'.mp4'];
-            concat=regexprep(concat, ':', '_');
-            movefile('./Saved Data/capture.mp4',concat);
-        end
-    end
 end

@@ -21,8 +21,9 @@ function flyfly()
 %            Because the spider spied 'er!
 %
 %
+
 disp(' ');
-disp(' -FlyFly 3.2R- ');
+disp(' -FlyFly 3.2- ');
 
 addpath(cd, [cd '/' genpath('Subfunctions')], [cd '/' genpath('Stimuli')]);
 clearRoot;

@@ -22,7 +22,7 @@ function varargout = tableGui(varargin)
 
 % Edit the above text to modify the response to help tableGui
 
-% Last Modified by GUIDE v2.5 28-Apr-2021 08:53:13
+% Last Modified by GUIDE v2.5 27-May-2020 17:02:19
 
 %--------------------------------------------------------------------------
 % FlyFly v2
@@ -223,22 +223,6 @@ if closeScreen
     screenFcn('Kill');
 end
 
-% Written By Chris Johnston - chris.johnstonaus@gmail.com
-function intilizecam() % Initilize Guvcview
-%     guv = 'guvcview'; 
-%     v = ' --video=';
-%     profile = ' --profile=./Exposed.gpfl';
-%     firstline = '#!/bin/bash\n';
-%     secondline = '# webcam Initilize Camera\n';
-%     videopath= './Saved Data/';
-%     videofile= 'video.mp4'
-%     thirdline = [guv,v,videopath,videofile,profile];
-%     concat = [firstline,secondline,thirdline];
-%     fid = fopen('intitilizecam.sh','w');
-%     fprintf(fid,concat);
-    command = 'bash intitilizecam.sh &'; % links to bash script that starts guvcview with video parameters 
-    disp('Trying to Init Cam');
-    [stat, cmdOut] = system(command, '-echo'); % Runs command in terminal
 
 % --- Executes on button press in initScreen.
 function initScreen_Callback(hObject, eventdata, handles)
@@ -258,7 +242,6 @@ function initScreen_Callback(hObject, eventdata, handles)
 
 screenFcn('Init');
 updateFigure(handles);
-intilizecam();
 
 
 
@@ -2346,23 +2329,3 @@ setappdata(0, 'screenData', screenData);
 % Screen('Flip', screenData.wPtr);
 % setappdata(0, 'screenData', screenData);
 
-
-% --- Executes on button press in CentrelineCalc.
-function CentrelineCalc_Callback(hObject, eventdata, handles)
-% hObject    handle to CentrelineCalc (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-figure(1);
-Centreline();
-
-% --- Executes on button press in Highdef_Image.
-function Highdef_Image_Callback(hObject, eventdata, handles)
-% hObject    handle to Highdef_Image (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA) guvcview --video=/home/hoverfly/Videos/capture.mp4 
-
-[imagefile, imagepath] = uiputfile('*.png', 'Save video');
-saveHighdefBash(imagepath, imagefile);
-[status, cmdOut] = system('bash HighDefCapture.sh &', '-echo');
-pause(10);
-[status, cmdOut] = system('bash ExitCam.sh &', '-echo');
