@@ -38,17 +38,13 @@ switch Action
             
             InitializeMatlabOpenGL;
 
-%             PsychImaging('PrepareConfiguration');
+            PsychImaging('PrepareConfiguration');
+%             [wPtr,rect] = PsychImaging('OpenWindow', screenNumber, rgbWhite);
 %             PsychImaging('AddTask', 'AllViews', 'GeometryCorrection', 'BezierCalibdata.mat');
 
             %use screenPartial for a non full screen
-%             screenData.beforeBgColor = screenData.bgColor;
-experimental = true;
-if experimental
-    PsychImaging('PrepareConfiguration');
-    PsychImaging('AddTask', 'General', 'UseDisplayRotation', -90);
-    [wPtr,rect] = PsychImaging('OpenWindow', screenNumber, rgbWhite, screenPartial);
-else
+             PsychImaging('AddTask', 'General', 'UseDisplayRotation', -90);
+            screenData.beforeBgColor = screenData.bgColor;
             if screenData.usePartial
                 [wPtr,rect] = Screen('OpenWindow', screenNumber, chstimuli(index).targetBgColor, screenPartial, ...
                     [], [], [], [], kPsychNeedFastOffscreenWindows);
@@ -56,8 +52,10 @@ else
                 [wPtr,rect] = Screen('OpenWindow', screenNumber, chstimuli(index).targetBgColor, ...
                     [], [], [], [], [], kPsychNeedFastOffscreenWindows);%fullscreen
             end
-end
             screenData.bgColor = chstimuli(index).targetBgColor;
+%             fitSize = [rect(3), rect(4)];
+             %PsychImaging('AddTask', 'General', 'UsePanelFitter', fitSize, 'Aspect', [], [], -90);
+             
 %             if screenData.usePartial
 %                 [wPtr,rect] = Screen('OpenWindow', screenNumber, screenData.bgColor, screenPartial, ...
 %                     [], [], [], [], kPsychNeedFastOffscreenWindows);

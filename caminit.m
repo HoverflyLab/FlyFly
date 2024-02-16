@@ -1,0 +1,2 @@
+
+system('bash intitilizecam.sh')

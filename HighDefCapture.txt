@@ -1,0 +1,3 @@
+#!/bin/bash
+# webcam High Def Image
+guvcview --video=/home/hoverfly/Desktop/Testing/Files/test.mp4 --profile=./defaultPS3.gpfl --video_timer=5
