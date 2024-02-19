@@ -1,15 +1,15 @@
-function varargout = settings(varargin)
-% SETTINGS M-file for settings.fig
-%      SETTINGS, by itself, creates a new SETTINGS or raises the existing
+function varargout = layerSettings(varargin)
+% SETTINGS M-file for layerSettings.fig
+%      LAYERSETTINGS, by itself, creates a new LAYERSETTINGS or raises the existing
 %      singleton*.
 %
-%      H = SETTINGS returns the handle to a new SETTINGS or the handle to
+%      H = LAYERSETTINGS returns the handle to a new LAYERSETTINGS or the handle to
 %      the existing singleton*.
 %
-%      SETTINGS('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in SETTINGS.M with the given input arguments.
+%      LAYERSETTINGS('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in LAYERSETTINGS.M with the given input arguments.
 %
-%      SETTINGS('Property','Value',...) creates a new SETTINGS or raises the
+%      LAYERSETTINGS('Property','Value',...) creates a new LAYERSETTINGS or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
 %      applied to the GUI before settings_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
