@@ -22,7 +22,7 @@ function varargout = layerSettings(varargin)
 
 % Edit the above text to modify the response to help settings
 
-% Last Modified by GUIDE v2.5 24-Nov-2011 17:54:10
+% Last Modified by GUIDE v2.5 21-Feb-2024 09:51:36
 
 %--------------------------------------------------------------------------
 % FlyFly v2
@@ -74,9 +74,7 @@ index       = navData.activeStim;
 z           = navData.marker(index);
 
 layer = chstimuli(index).layers(z);
-
 tmpSettings = layer.settings;
-
 %set layer name
 set(handles.layerName, 'String', layer.name);
 
@@ -106,13 +104,13 @@ setValues(handles);
 
 chstimuli = getappdata(0, 'chstimuli');
 navData   = getappdata(0, 'navData');
-settings  = getappdata(gcf, 'tmpSettings');
+lSettings  = getappdata(gcf, 'tmpSettings');
 
 index = navData.activeStim;
 z     = navData.marker(index);
 
 %save new settings
-chstimuli(index).layers(z).settings = settings;
+chstimuli(index).layers(z).settings = lSettings;
 
 setappdata(0, 'chstimuli', chstimuli);
 close(gcf);
@@ -241,13 +239,13 @@ end
 
 function updateFigure(handles)
 
-settings = getappdata(gcf, 'tmpSettings');
+lSettings = getappdata(gcf, 'tmpSettings');
 k = str2num(get(handles.currentTrial, 'String'));
 
 %set drop down list
 trialList = [];
 
-C = length(settings);
+C = length(lSettings);
 for c = 1:C
     trialList{c} = ['Trial ' num2str(c)];
     
@@ -259,110 +257,109 @@ end
 set(handles.trialList, 'String', trialList);
 
 %global
-set(handles.globalSetting, 'Value', settings(k).global);
+set(handles.globalSetting, 'Value', lSettings(k).global);
 
 %path settings
-if strcmp(settings(k).path1{1}, 'OFF')
+if strcmp(lSettings(k).path1{1}, 'OFF')
     set(handles.lable1, 'String', ' ');
     set(handles.path1,  'Enable', 'Off');
     set(handles.change, 'Enable', 'Off');
 else
-    set(handles.lable1, 'String', settings(k).path1{1});
+    set(handles.lable1, 'String', lSettings(k).path1{1});
     set(handles.path1,  'Enable', 'On');
-    set(handles.path1,  'String', settings(k).path1{2});
+    set(handles.path1,  'String', lSettings(k).path1{2});
     set(handles.change, 'Enable', 'On');
 end
 
 %box settings
-if strcmp(settings(k).box1{1}, 'OFF')
+if strcmp(lSettings(k).box1{1}, 'OFF')
     set(handles.checkbox1, 'Visible', 'Off');
 else
     set(handles.checkbox1, 'Visible', 'On');
-    set(handles.checkbox1, 'String', settings(k).box1{1});
-    set(handles.checkbox1, 'Value',  settings(k).box1{2});
+    set(handles.checkbox1, 'String', lSettings(k).box1{1});
+    set(handles.checkbox1, 'Value',  lSettings(k).box1{2});
 end
 
-if strcmp(settings(k).box2{1}, 'OFF')
+if strcmp(lSettings(k).box2{1}, 'OFF')
     set(handles.checkbox2, 'Visible', 'Off');
 else
     set(handles.checkbox2, 'Visible', 'On');
-    set(handles.checkbox2, 'String', settings(k).box2{1});
-    set(handles.checkbox2, 'Value',  settings(k).box2{2});
+    set(handles.checkbox2, 'String', lSettings(k).box2{1});
+    set(handles.checkbox2, 'Value',  lSettings(k).box2{2});
 end
 
-if strcmp(settings(k).box3{1}, 'OFF')
+if strcmp(lSettings(k).box3{1}, 'OFF')
     set(handles.checkbox3, 'Visible', 'Off');
 else
     set(handles.checkbox3, 'Visible', 'On');
-    set(handles.checkbox3, 'String', settings(k).box3{1});
-    set(handles.checkbox3, 'Value',  settings(k).box3{2});
+    set(handles.checkbox3, 'String', lSettings(k).box3{1});
+    set(handles.checkbox3, 'Value',  lSettings(k).box3{2});
 end
 
-if strcmp(settings(k).box4{1}, 'OFF')
+if strcmp(lSettings(k).box4{1}, 'OFF')
     set(handles.checkbox4, 'Visible', 'Off');
 else
     set(handles.checkbox4, 'Visible', 'On');
-    set(handles.checkbox4, 'String', settings(k).box4{1});
-    set(handles.checkbox4, 'Value',  settings(k).box4{2});
+    set(handles.checkbox4, 'String', lSettings(k).box4{1});
+    set(handles.checkbox4, 'Value',  lSettings(k).box4{2});
 end
 
-if strcmp(settings(k).box5{1}, 'OFF')
+if strcmp(lSettings(k).box5{1}, 'OFF')
     set(handles.checkbox5, 'Visible', 'Off');
 else
     set(handles.checkbox5, 'Visible', 'On');
-    set(handles.checkbox5, 'String', settings(k).box5{1});
-    set(handles.checkbox5, 'Value',  settings(k).box5{2});
+    set(handles.checkbox5, 'String', lSettings(k).box5{1});
+    set(handles.checkbox5, 'Value',  lSettings(k).box5{2});
 end
 
 %text settings
-if strcmp(settings(k).edit1{1}, 'OFF')
+if strcmp(lSettings(k).edit1{1}, 'OFF')
     set(handles.edit1,      'Visible', 'Off');
     set(handles.edit_text1, 'Visible', 'Off');
 else
     set(handles.edit1,      'Visible', 'On');
-    set(handles.edit_text1, 'String',  settings(k).edit1{1});
-    set(handles.edit1,      'String',  settings(k).edit1{2});
+    set(handles.edit_text1, 'String',  lSettings(k).edit1{1});
+    set(handles.edit1,      'String',  lSettings(k).edit1{2});
 end
 
-if strcmp(settings(k).edit2{1}, 'OFF')    
+if strcmp(lSettings(k).edit2{1}, 'OFF')    
     set(handles.edit2,      'Visible', 'Off');
     set(handles.edit_text2, 'Visible', 'Off');
 else
     set(handles.edit2,      'Visible', 'On');
-    set(handles.edit_text2, 'String',  settings(k).edit2{1});
-    set(handles.edit2,      'String',  settings(k).edit2{2});
+    set(handles.edit_text2, 'String',  lSettings(k).edit2{1});
+    set(handles.edit2,      'String',  lSettings(k).edit2{2});
 end
 
-if strcmp(settings(k).edit3{1}, 'OFF')
+if strcmp(lSettings(k).edit3{1}, 'OFF')
     set(handles.edit3,      'Visible', 'Off');
     set(handles.edit_text3, 'Visible', 'Off');
 else
     set(handles.edit3,      'Visible', 'On');
-    set(handles.edit_text3, 'String',  settings(k).edit3{1});
-    set(handles.edit3,      'String',  settings(k).edit3{2});
+    set(handles.edit_text3, 'String',  lSettings(k).edit3{1});
+    set(handles.edit3,      'String',  lSettings(k).edit3{2});
 end
 
-if strcmp(settings(k).edit4{1}, 'OFF')
+if strcmp(lSettings(k).edit4{1}, 'OFF')
     set(handles.edit4,      'Visible', 'Off');
     set(handles.edit_text4, 'Visible', 'Off');
 else
     set(handles.edit4,      'Visible', 'On');
-    set(handles.edit_text4, 'String',  settings(k).edit4{1});
-    set(handles.edit4,      'String',  settings(k).edit4{2});
+    set(handles.edit_text4, 'String',  lSettings(k).edit4{1});
+    set(handles.edit4,      'String',  lSettings(k).edit4{2});
 end
 
-if strcmp(settings(k).edit5{1}, 'OFF')
+if strcmp(lSettings(k).edit5{1}, 'OFF')
     set(handles.edit5,      'Visible', 'Off');
     set(handles.edit_text5, 'Visible', 'Off');
 else
     set(handles.edit5,      'Visible', 'On');
-    set(handles.edit_text5, 'String',  settings(k).edit5{1});
-    set(handles.edit5,      'String',  settings(k).edit5{2});
+    set(handles.edit_text5, 'String',  lSettings(k).edit5{1});
+    set(handles.edit5,      'String',  lSettings(k).edit5{2});
 end
 
 %----------------Set Values------------------------%
 function setValues(handles)
-
 settings = getappdata(gcf, 'tmpSettings');
 k        = str2num(get(handles.currentTrial, 'String'));
 
@@ -557,5 +554,12 @@ end
 % --- Executes during object creation, after setting all properties.
 function ok_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to ok (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes during object creation, after setting all properties.
+function cancel_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to cancel (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
