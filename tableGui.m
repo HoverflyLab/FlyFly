@@ -731,7 +731,7 @@ set(handles.stimName,  'String', chstimuli(index).name);
 set(handles.layerName,  'String', ['Layer ' num2str(z) ':' chstimuli(index).layers(z).name]);
 
 %Update project name
-set(handles.figure1, 'Name', ['FlyFly 3.1: ' navData.fileName]);
+set(handles.figure1, 'Name', ['FlyFly 4.0: ' navData.fileName]);
 
 %set info label
 if screenData.isInit

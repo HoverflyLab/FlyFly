@@ -8,7 +8,7 @@ function flyfly()
 %            __/ |       __/ |
 %           |___/       |___/ 
 %|-------------------------------------------------------
-%|   FlyFly 3.0 - Visual Stimulus user interface        |
+%|   FlyFly 4.0 - Visual Stimulus user interface        |
 %|                                                      |
 %|    -Requires MatLab 2010 with Psychophysics toolbox  |
 %|    -Documentation and user�s manual available        |
@@ -23,7 +23,7 @@ function flyfly()
 %
 
 disp(' ');
-disp(' -FlyFly 3.2- ');
+disp(' -FlyFly 4.0- ');
 
 addpath(cd, [cd '/' genpath('Subfunctions')], [cd '/' genpath('Stimuli')]);
 clearRoot;

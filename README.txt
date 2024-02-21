@@ -12,6 +12,7 @@
 
 
 FlyFly is a free, high level interface used to create visual stimuli developed for use in motion vision research. You will need 64-bit MatLab (http://www.mathworks.com) with Psychophysics toolbox (http://psychtoolbox.org) to run it.
+Both the install guide and the operations manual can be found within the documentation folder.
 
 
 For more information please visit http://www.flyfly.se
@@ -19,10 +20,26 @@ For more information please visit http://www.flyfly.se
 
 (C) Jonas Henriksson 2010    jonas.henriksson@flyfly.se
 
-
+              |Why did the fly fly?|
+          |Because the spider spied 'er!|
 
 ------------------------------------------------------------------------------------------
 Version History 
+------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------
+4.0 Updates
+------------------------------------------------------------------------------------------
+
+4.0
+
+* Made Flyfly compatible with MATLAB 2016a up to release 2023b
+* Updated documentation for install guide to keep in line with modern versions of PsychToolbox as the old installation method has been deprecated
+* Migrated the Flyfly GUI from GUIDE to App Designer, to ensure support for the GUI is maintained in future MATLAB releases
+* NOTE: As the GUI is now running on App Designer, the user must use MATLAB 2016a or later for Flyfly to work
+
+------------------------------------------------------------------------------------------
+3.0 Updates
 ------------------------------------------------------------------------------------------
 3.1
 
@@ -30,6 +47,9 @@ Version History
 * new stimulus (Target3D) allows 3D target to move through space. Can be used with Starfield 2 for target movement in background clutter.
 * new stimulus (ImageTarget) allows 2D movement of a user-specified image along a trajectory
 
+------------------------------------------------------------------------------------------
+2.0 Updates
+------------------------------------------------------------------------------------------
 2.60
 *Merged with flyfly version with Roel's shuffle button. This button uses the value from 
 the box 'use Value' and takes this number of trials as a 'set' that it will keep together 
@@ -39,7 +59,7 @@ to be a multiple of 'use value'
 *Removed exit experimental exit dialog
 *Removed delay at screen init, not needed with new daq
 
-
+------------------------------------------------------------------------------------------
 2.55
 * Several trials in Starfield generated a bug because the number of stars 
   must be a scalar. Now only the first trials determines the number of stars.
@@ -49,12 +69,14 @@ to be a multiple of 'use value'
 * Removed the flickering of the Trigger. This can easily be added again if needed, 
   it is only commented away.
 
+------------------------------------------------------------------------------------------
 2.50
 * Dual Apertures added, same as Apertures but with two holes. 
   Possibility to change transperancy of background and apertures
 * New way to set fly position in Settings window without clicking on the screen, 
   useful when using single screen mode
 
+------------------------------------------------------------------------------------------
 2.40
 * New Stimulus: Rolling Image M2 - Improved version of rolling image
 * New Stimulus: Grid - Draws a static grid
@@ -133,6 +155,8 @@ TableGui
 Rolling image
 * Texture check: Same image in different trials just use one texture
 
+------------------------------------------------------------------------------------------
+1.0 Updates
 ------------------------------------------------------------------------------------------
 1.7.2
 
