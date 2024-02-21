@@ -599,6 +599,7 @@ end
 
 
 % --- Executes on key press with focus on uitable1 and none of its controls.
+% [[DEPRECATED]]
 function uitable1_KeyPressFcn(hObject, eventdata, handles)
 % hObject    handle to uitable1 (see GCBO)
 % eventdata  structure with the following fields (see UITABLE)
