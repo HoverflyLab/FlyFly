@@ -22,7 +22,7 @@ function varargout = tableGui(varargin)
 
 % Edit the above text to modify the response to help tableGui
 
-% Last Modified by GUIDE v2.5 27-May-2020 17:02:19
+% Last Modified by GUIDE v2.5 21-Feb-2024 15:51:23
 
 %--------------------------------------------------------------------------
 % FlyFly v2
@@ -609,7 +609,7 @@ function uitable1_KeyPressFcn(hObject, eventdata, handles)
 
 % Paste data into sequencer table
 if length(eventdata.Modifier) == 1 && strcmp(eventdata.Modifier{:},'control') && ... 
-        strcmp(eventdata.Key,'v')
+    strcmp(eventdata.Key,'v')
     import = importdata('-pastespecial');
 
     chstimuli = getappdata(0, 'chstimuli');
@@ -2328,4 +2328,3 @@ setappdata(0, 'screenData', screenData);
 % Screen('FillRect', screenData.wPtr, screenData.triggerRGBoff, screenData.triggerPos); %trigger off
 % Screen('Flip', screenData.wPtr);
 % setappdata(0, 'screenData', screenData);
-
