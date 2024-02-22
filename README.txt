@@ -33,6 +33,7 @@ Version History
 
 4.0
 
+* New numbered version as due to sweeping compatability changes that allows Flyfly to run on modern software
 * Made Flyfly compatible with MATLAB 2016a up to release 2023b
 * Updated documentation for install guide to keep in line with modern versions of PsychToolbox as the old installation method has been deprecated
 * Migrated the Flyfly GUI from GUIDE to App Designer, to ensure support for the GUI is maintained in future MATLAB releases
