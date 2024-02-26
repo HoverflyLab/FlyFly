@@ -11,7 +11,7 @@ function flyfly()
 %|   FlyFly 4.0 - Visual Stimulus user interface        |
 %|                                                      |
 %|    -Requires MatLab 2010 with Psychophysics toolbox  |
-%|    -Documentation and user�s manual available        |
+%|    -Documentation and user's manual available        |
 %|                                                      |
 %|                                                      |
 %| info@flyfly.se             (c) Jonas Henriksson 2010 |
