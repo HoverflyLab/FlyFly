@@ -57,17 +57,17 @@ switch Option
         
     case 'InitScreenData'
         %screen data
-        screenData.isInit       = 0;         %is the screen initialized?
-        screenData.inUse        = 0;         %is the screen in use atm?        
-        screenData.wPtr         = 0;         %pointer to screen
-        screenData.rect         = 0;         %size of screen
-        screenData.hz           = 0;         %monitor update frequency (nominal)
-        screenData.ifi          = 0;         %monitor frame length (measured)
-        screenData.gamma        = 1;       %gamma value of monitor
+        screenData.isInit        = 0;         %is the screen initialized?
+        screenData.inUse         = 0;         %is the screen in use atm?        
+        screenData.wPtr          = 0;         %pointer to screen
+        screenData.rect          = 0;         %size of screen
+        screenData.hz            = 0;         %monitor update frequency (nominal)
+        screenData.ifi           = 0;         %monitor frame length (measured)
+        screenData.gamma         = 1;       %gamma value of monitor
         % New variables
-        screenData.dlp          = 0;
+        screenData.recording     = 0;
         screenData.monitorHeight = 27.5;
-        screenData.flyDistance  = 14;
+        screenData.flyDistance   = 14;
         
         screenData.oldlevel       = Screen('Preference', 'Verbosity', 1); %critical errors only
         screenData.screenNumber   = 0; %best guess of which monitor to use

@@ -39,19 +39,20 @@ fcnDraw = cell(numLayers,1);
 % ScreenData.bgColor = ScreenData.targetBgColor;
 % ScreenData = rmfield(ScreenData, 'targetBgColor');
 
-S.triggerPos  = ScreenData.triggerPos;
-S.monitorHz   = ScreenData.hz;
-S.wPtr        = ScreenData.wPtr;
-S.ifi         = ScreenData.ifi;
-S.flyPos      = ScreenData.flyPos;
-S.rect        = ScreenData.rect;
-S.dlp         = ScreenData.dlp;
-S.monitorHeight= ScreenData.monitorHeight;
+S.triggerPos    = ScreenData.triggerPos;
+S.monitorHz     = ScreenData.hz;
+S.wPtr          = ScreenData.wPtr;
+S.ifi           = ScreenData.ifi;
+S.flyPos        = ScreenData.flyPos;
+S.rect          = ScreenData.rect;
+S.recording     = ScreenData.recording;
+S.monitorHeight = ScreenData.monitorHeight;
 S.triggerRGBon  = ScreenData.triggerRGBon;
 S.triggerRGBoff = ScreenData.triggerRGBoff;
 
 S.bgColor       = ScreenData.bgColor; 
 
+NumSubframes = 1;
 
 fprintf('Calculating (might take some time if you have a starfield with many dots)... ');
 for z = 1:numLayers
@@ -59,12 +60,6 @@ for z = 1:numLayers
     % GET CRITICAL INPUT AND DRAW FUNCTION FOR EACH LAYER
     fcnPrep  = Stimulus.layers(z).fcnPrep;
     name = func2str(fcnPrep);
-    % DLP or normal mode
-    if S.dlp
-        NumSubframes = 3;
-    else
-        NumSubframes = 1;
-    end
       
     % Hacky solution to Target 3D - because we specify velocity instead of
     % number of frames, the number of frames needs to be calculated and 
@@ -144,7 +139,7 @@ end
 fprintf('Done!\n');
 
 % RGB difference between each trigger frame
-if S.dlp
+if S.recording
     triggerFlickOffset = 0;
 else
     triggerFlickOffset = 105;
@@ -267,41 +262,13 @@ for k=1:length(frameMatrix)
         tic     % measure draw time
         for z=1:(size(frameMatrix{k},1)-1)
             if (frameMatrix{k}(z,n)~=0)
-                if ~S.dlp
-                    %%% Normal mode %%%
-                    if Stimulus.layers(z).impulse
-                        arg_n = 1;
-                    else
-                        arg_n = frameMatrix{k}(z,n);
-                    end
-                    critInput{z} = fcnDraw{z}(S.wPtr, arg_n, k, ScreenData.ifi, critInput{z});
+                %%% Normal mode %%%
+                if Stimulus.layers(z).impulse
+                    arg_n = 1;
                 else
-                    %%% DLP mode
-                    % It is assumed that the draw functions (fcnDraw) outputs only grayscale
-                    % images, i.e. that for each pixel the R, G and B values are the same.
-                    % Each subframe is then drawn to just one of the three RGB channels in
-                    % the order BRG.
-                    if Stimulus.layers(z).impulse
-                        critInput{z} = fcnDraw{z}(S.wPtr, 1, k, ScreenData.ifi, critInput{z});
-                    else
-                        arg_nb = frameMatrix{k}(z,n)*3-2;
-                        arg_nr = frameMatrix{k}(z,n)*3-1;
-                        arg_ng = frameMatrix{k}(z,n)*3;
-                        
-                        % Draw first subframe to BLUE channel
-                        [sourceFactorOld, destinationFactorOld, colorMaskOld] = ...
-                            Screen('BlendFunction', S.wPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, [0 0 1 1]);
-                        critInput{z} = fcnDraw{z}(S.wPtr, arg_nb, k, ScreenData.ifi, critInput{z});
-                        % Draw second subframe to RED channel
-                        Screen('BlendFunction', S.wPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, [1 0 0 1]);
-                        critInput{z} = fcnDraw{z}(S.wPtr, arg_nr, k, ScreenData.ifi, critInput{z});
-                        % Draw third subframe to GREEN channel
-                        Screen('BlendFunction', S.wPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, [0 1 0 1]);
-                        critInput{z} = fcnDraw{z}(S.wPtr, arg_ng, k, ScreenData.ifi, critInput{z});
-                        % Reset blend function to original values
-                        Screen('BlendFunction', S.wPtr, sourceFactorOld, destinationFactorOld, colorMaskOld);
-                    end
+                    arg_n = frameMatrix{k}(z,n);
                 end
+                critInput{z} = fcnDraw{z}(S.wPtr, arg_n, k, ScreenData.ifi, critInput{z});
             end
         end
         Screen('FillRect', S.wPtr, frameMatrix{k}(end,n), S.triggerPos);
