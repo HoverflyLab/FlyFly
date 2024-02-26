@@ -68,8 +68,7 @@ switch Action
             screenData          = initFcn('InitScreenData');
             navData             = initFcn('InitNavData');
                    
-            navData.emstimuli   = chstimuli;            
-            chstimuli(1).hGui   = Input;
+            navData.emstimuli   = chstimuli;      
             
             setappdata(0, 'chstimuli', chstimuli); 
             setappdata(0, 'navData'  , navData);   
@@ -78,8 +77,7 @@ switch Action
         else
             %disp('no init needed!')
             index = navData.activeStim;                     %Find index of current fig
-            
-            chstimuli(index).hGui = Input;                  %Store handle
+
             setappdata(0, 'chstimuli', chstimuli);          %Save handle
         end
         

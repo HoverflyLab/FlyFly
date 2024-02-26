@@ -48,7 +48,7 @@ switch Option
             navData.colWidth         = 45;            %pixels in each table column
         else
             navData.windowPosition   = 200;           %pixels to right from left border
-            navData.colWidth         = 50;            %pixels in each table column
+            navData.colWidth         = 75;            %pixels in each table column
         end
                 
         navData.saveDataPathName = strcat(cd, '/Saved Data'); %default pathname to save data into

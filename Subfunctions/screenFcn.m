@@ -43,12 +43,6 @@ switch Action
 
             %use screenPartial for a non full screen
 %             screenData.beforeBgColor = screenData.bgColor;
-experimental = true;
-if experimental
-    PsychImaging('PrepareConfiguration');
-    PsychImaging('AddTask', 'General', 'UseDisplayRotation', -90);
-    [wPtr,rect] = PsychImaging('OpenWindow', screenNumber, rgbWhite, screenPartial);
-else
             if screenData.usePartial
                 [wPtr,rect] = Screen('OpenWindow', screenNumber, chstimuli(index).targetBgColor, screenPartial, ...
                     [], [], [], [], kPsychNeedFastOffscreenWindows);
@@ -56,7 +50,6 @@ else
                 [wPtr,rect] = Screen('OpenWindow', screenNumber, chstimuli(index).targetBgColor, ...
                     [], [], [], [], [], kPsychNeedFastOffscreenWindows);%fullscreen
             end
-end
             screenData.bgColor = chstimuli(index).targetBgColor;
 %             if screenData.usePartial
 %                 [wPtr,rect] = Screen('OpenWindow', screenNumber, screenData.bgColor, screenPartial, ...
@@ -113,7 +106,7 @@ end
         
         screenData.isInit = 0;
         screenData.inUse  = 0;
-         screenData.bgColor        = -1;   
+        screenData.bgColor       = -1;   
         screenData.beforeBgColor = -1;
         setappdata(0, 'screenData', screenData);
         

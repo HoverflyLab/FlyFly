@@ -36,7 +36,7 @@ switch Option
         screenData = getappdata(0, 'screenData');
         
         %uiputfile(string): string may be pathname (c:/folder/*.mat)
-        [fileName,pathName,FilterIndex] = uiputfile(strcat(defaultFolder, '*.mat'));
+        [fileName,pathName,~] = uiputfile(strcat(defaultFolder, '*.mat'));
         
         if fileName %if press on cancel no fileName will be given
             navData.fileName = fileName;
@@ -73,7 +73,7 @@ switch Option
                 
             else
                 disp('incorrect file');
-            end;
+            end
             
         end
         
@@ -121,7 +121,7 @@ switch Option
                             insertIndex = length(chstimuli) +1;
                         end
                         
-                        if insertIndex == length(chstimuli) +1; %place last
+                        if insertIndex == length(chstimuli) +1 %place last
                             chstimuli = [chstimuli loadedStim];
                         else
                             stimuliBefore = chstimuli(1:insertIndex-1);
