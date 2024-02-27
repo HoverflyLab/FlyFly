@@ -31,6 +31,7 @@ switch Action
         rgbBlack = [0 0 0];
         screenPartial = screenData.partial;
         screenNumber  = screenData.screenNumber;
+        recording = screenData.recording;
         
         AssertOpenGL; %Check if openGL is available
         try
@@ -49,6 +50,25 @@ switch Action
             else
                 [wPtr,rect] = Screen('OpenWindow', screenNumber, chstimuli(index).targetBgColor, ...
                     [], [], [], [], [], kPsychNeedFastOffscreenWindows);%fullscreen
+            end
+
+            % Set up connection to cammera equipment
+            if recording
+                % Create video object
+                video = videoinput("gentl", 1, "Mono8");
+                %Set up location and filename
+                videoLocation = navData.saveDataPathName;
+                videoName = "recording1.avi";
+                fullVideoName = fullfile(videoLocation, videoName);
+                
+                % Create and configure the video writer
+                logfile = VideoWriter(fullVideoName, "Motion JPEG AVI");
+                
+                % Configure the device to log to disk using the video writer
+                v.LoggingMode = "disk";
+                v.DiskLogger = logfile;
+
+                setappdata(0, 'video', video);
             end
             screenData.bgColor = chstimuli(index).targetBgColor;
 %             if screenData.usePartial
@@ -99,10 +119,14 @@ switch Action
         
         gammatable = repmat([0:255]',1,3)./255;
         Screen('LoadNormalizedGammaTable', screenData.wPtr, gammatable);
+        video = getappdata(0, 'video');
         
         %Closing
         Screen('CloseAll');                                      %Close Screen
         Screen('Preference', 'Verbosity', screenData.oldlevel);  %Enable warnings
+        delete(video)                                            %Kill video connection
+        clear video
+
         
         screenData.isInit = 0;
         screenData.inUse  = 0;
