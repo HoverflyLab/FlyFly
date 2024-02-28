@@ -66,6 +66,7 @@ switch Option
         screenData.gamma         = 1;       %gamma value of monitor
         % New variables
         screenData.recording     = 0;
+        screenData.useRotated    = 0;
         screenData.monitorHeight = 27.5;
         screenData.flyDistance   = 14;
         
