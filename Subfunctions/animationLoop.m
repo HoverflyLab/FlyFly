@@ -162,8 +162,8 @@ triggerFlickOffset = 105;
 % Set up connection to cammera equipment
 if recording ~= 0
     % Create video object
-    video = videoinput("gentl", 1, "Mono8");
-    %Set up location and filename
+    video = videoinput(screenData.videoAdaptor, 1);
+    % Set up location and filename
     videoLocation = navData.saveDataPathName;
     videoName = "recording1.avi";
     fullVideoName = fullfile(videoLocation, videoName);

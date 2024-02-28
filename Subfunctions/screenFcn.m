@@ -31,7 +31,21 @@ switch Action
         rgbBlack = [0 0 0];
         screenPartial = screenData.partial;
         screenNumber  = screenData.screenNumber;
+
+        % Check if recording a video is selected
         recording = screenData.recording;
+        useDefault = 1;
+        % If user wants defaults, check for connected cameras
+        if recording == 1 && useDefault == 1 
+            disp("Searching for default camera")
+            imaqreset
+            for adaptorIndex = 1:length(imaqhwinfo().InstalledAdaptors) 
+                adaptor = imaqhwinfo().InstalledAdaptors{adaptorIndex};
+                if isempty(imaqhwinfo(adaptor).DeviceIDs) == 0, break; end
+            end
+            screenData.videoAdaptor = adaptor;
+            disp("The camera adaptor has defaulted to: " + adaptor);
+        end
         
         AssertOpenGL; %Check if openGL is available
         try
