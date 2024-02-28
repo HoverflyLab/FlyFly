@@ -334,7 +334,7 @@ for k=1:length(frameMatrix)
         
         n = n+1+missedFrames;
     end
-    if video ~= 0
+    if recording ~= 0
         stopcam(k, T.pause(z,:), 1:length(frameMatrix), video);
     end
 end

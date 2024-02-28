@@ -53,19 +53,22 @@ switch Action
             
             InitializeMatlabOpenGL;
 
-            %If required by user, rotate screen 90 degrees
-            if screenData.useRotated == 1
-                PsychImaging('PrepareConfiguration');
-                PsychImaging('AddTask', 'General', 'UseDisplayRotation', -90);
-            end
-            
             %use screenPartial for a non full screen
             if screenData.usePartial
-                [wPtr,rect] = Screen('OpenWindow', screenNumber, chstimuli(index).targetBgColor, screenPartial, ...
+                [wPtr,rect] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, screenPartial, ...
                     [], [], [], [], kPsychNeedFastOffscreenWindows);
             else
-                [wPtr,rect] = Screen('OpenWindow', screenNumber, chstimuli(index).targetBgColor, ...
+                [wPtr,rect] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, ...
                     [], [], [], [], [], kPsychNeedFastOffscreenWindows);%fullscreen
+            end
+
+            %If required by user, rotate screen 90 degrees
+            if screenData.useRotated ~= 1
+                PsychImaging('PrepareConfiguration');
+                PsychImaging('AddTask', 'General', 'UseDisplayRotation', -90);
+            else
+                PsychImaging('PrepareConfiguration');
+                PsychImaging('AddTask', 'General', 'UseDisplayRotation', 0);
             end
 
             screenData.bgColor = chstimuli(index).targetBgColor;
