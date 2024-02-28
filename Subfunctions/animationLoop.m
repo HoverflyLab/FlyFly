@@ -1,5 +1,5 @@
-function skippedFrames = animationLoop(Stimulus, ScreenData, UserSettings, TrialSubset)
-%function skippedFrames = animationLoop(Stimulus, ScreenData, UserSettings, TrialSubset)
+function skippedFrames = animationLoop(stimulus, screenData, userSettings, trialSubset)
+%function skippedFrames = animationLoop(Stimulus, ScreenData, UserSettings, TrialSubset, video)
 % 
 % This functions runs the loop that draws the stimuli to the screen in
 % realtime. All the timing is handled from here.
@@ -15,6 +15,17 @@ function skippedFrames = animationLoop(Stimulus, ScreenData, UserSettings, Trial
 % proceeds to the next frame. 
 % 
 
+ 
+
+% recording = screenData.recording;
+% if recording
+%     video = getappdata(0, 'video');
+%     delete(video)                                        %Kill video connection
+%     clear video
+% end
+
+
+
 %--------------------------------------------------------------------------
 % FlyFly v2
 %
@@ -26,11 +37,17 @@ function skippedFrames = animationLoop(Stimulus, ScreenData, UserSettings, Trial
 
 SKIP_PROP_THRESHOLD = 3;
 
-numLayers = length(Stimulus.layers);
-numRuns   = length(TrialSubset);
+numLayers = length(stimulus.layers);
+numRuns   = length(trialSubset);
 
 critInput = cell(numLayers,1);
 fcnDraw = cell(numLayers,1);
+
+% Do we want to record video?
+% 0 for false, 1 for true
+recording = screenData.recording;
+
+navData = getappdata(0, 'navData');
 
 %Screen data
 %--------------------------------------------------------------------------
@@ -39,26 +56,27 @@ fcnDraw = cell(numLayers,1);
 % ScreenData.bgColor = ScreenData.targetBgColor;
 % ScreenData = rmfield(ScreenData, 'targetBgColor');
 
-S.triggerPos    = ScreenData.triggerPos;
-S.monitorHz     = ScreenData.hz;
-S.wPtr          = ScreenData.wPtr;
-S.ifi           = ScreenData.ifi;
-S.flyPos        = ScreenData.flyPos;
-S.rect          = ScreenData.rect;
-S.recording     = ScreenData.recording;
-S.monitorHeight = ScreenData.monitorHeight;
-S.triggerRGBon  = ScreenData.triggerRGBon;
-S.triggerRGBoff = ScreenData.triggerRGBoff;
+S.triggerPos    = screenData.triggerPos;
+S.monitorHz     = screenData.hz;
+S.wPtr          = screenData.wPtr;
+S.ifi           = screenData.ifi;
+S.flyPos        = screenData.flyPos;
+S.rect          = screenData.rect;
+S.recording     = screenData.recording;
+S.monitorHeight = screenData.monitorHeight;
+S.triggerRGBon  = screenData.triggerRGBon;
+S.triggerRGBoff = screenData.triggerRGBoff;
 
-S.bgColor       = ScreenData.bgColor; 
+S.bgColor       = screenData.bgColor; 
 
 NumSubframes = 1;
+video.FramesPerTrigger = Inf;
 
 fprintf('Calculating (might take some time if you have a starfield with many dots)... ');
 for z = 1:numLayers
 
     % GET CRITICAL INPUT AND DRAW FUNCTION FOR EACH LAYER
-    fcnPrep  = Stimulus.layers(z).fcnPrep;
+    fcnPrep  = stimulus.layers(z).fcnPrep;
     name = func2str(fcnPrep);
       
     % Hacky solution to Target 3D - because we specify velocity instead of
@@ -75,9 +93,9 @@ for z = 1:numLayers
         % Afaik, you're not supposed to misuse settings in this way,
         % but there seem to be few other neat-ish solutions.
         % pursuit distinguishes between "Target 3D" and "Target 3D (Pursuit)".
-        pursuit = Stimulus.layers(z).settings(1).pursuit;
+        pursuit = stimulus.layers(z).settings(1).pursuit;
         
-        data = Stimulus.layers(z).data(1:end, TrialSubset);
+        data = stimulus.layers(z).data(1:end, trialSubset);
         
         % prepareForTarget3D returns fields named "num_frames", "target_start",
         % "target_end". These are calculated based on input data, and are needed
@@ -86,33 +104,33 @@ for z = 1:numLayers
         
         % Now hack the number of frames back into data!
         data(end-3,:) = ret.num_frames;
-        Stimulus.layers(z).data(1:end, TrialSubset) = data;
+        stimulus.layers(z).data(1:end, trialSubset) = data;
 
         % and now put the target start and end positions into settings, so the 
         % prep function can use them! 
-        for k = 1:length(Stimulus.layers(z).settings(TrialSubset))
-            idx = TrialSubset(k);
-            Stimulus.layers(z).settings(idx).target_start = ret.target_start(:, k);
-            Stimulus.layers(z).settings(idx).target_end = ret.target_end(:, k);
+        for k = 1:length(stimulus.layers(z).settings(trialSubset))
+            idx = trialSubset(k);
+            stimulus.layers(z).settings(idx).target_start = ret.target_start(:, k);
+            stimulus.layers(z).settings(idx).target_end = ret.target_end(:, k);
         end
     end 
     
-    data     = Stimulus.layers(z).data(1:end, TrialSubset);
-    impulse  = Stimulus.layers(z).impulse;
+    data     = stimulus.layers(z).data(1:end, trialSubset);
+    impulse  = stimulus.layers(z).impulse;
 
     T.time(z,:)     = data(end-3,:);
     T.pause(z,:)    = data(end-2,:);
     T.preStim(z,:)  = data(end-1,:);
     T.postStim(z,:) = data(end,:);
     
-    settings = Stimulus.layers(z).settings(1:end,TrialSubset);
+    settings = stimulus.layers(z).settings(1:end,trialSubset);
     if settings(1).global
         for k = 2:length(settings)
             settings(k) = settings(1);
         end
     end
     
-    critInput{z} = fcnPrep(data, ScreenData, settings, NumSubframes);
+    critInput{z} = fcnPrep(data, screenData, settings, NumSubframes);
 
 %     % General mechanism for storing general-purpose data related to
 %     % the experiment that has been generated during preparation.
@@ -127,22 +145,36 @@ for z = 1:numLayers
         for k=1:length(settings)
             if ((strcmp(name(13),'P') && settings(k).box3{2}==1) || ...
                 (strcmp(name(13),'M') && settings(k).box4{2}==1))
-                Stimulus.layers(z).images = critInput{z}.images;
+                stimulus.layers(z).images = critInput{z}.images;
                 critInput{z} = rmfield(critInput{z},'images');
                 break;
             end
         end
     end
     
-    fcnDraw{z} = Stimulus.layers(z).fcnDraw;
+    fcnDraw{z} = stimulus.layers(z).fcnDraw;
 end
 fprintf('Done!\n');
 
 % RGB difference between each trigger frame
-if S.recording
-    triggerFlickOffset = 0;
-else
-    triggerFlickOffset = 105;
+triggerFlickOffset = 105;
+
+% Set up connection to cammera equipment
+if recording ~= 0
+    % Create video object
+    video = videoinput("gentl", 1, "Mono8");
+    %Set up location and filename
+    videoLocation = navData.saveDataPathName;
+    videoName = "recording1.avi";
+    fullVideoName = fullfile(videoLocation, videoName);
+    
+    % Create and configure the video writer
+    logfile = VideoWriter(fullVideoName, "Motion JPEG AVI");
+    
+    % Configure the device to log to disk using the video writer
+    video.LoggingMode = "disk";
+    video.DiskLogger = logfile;
+    video.FramesPerTrigger = Inf;
 end
 
 T.trialFrames = T.preStim + T.time + T.postStim + T.pause;
@@ -199,35 +231,35 @@ timeStartPrecision = clock; %exact time (ms precision) as time vector
 
 disp(' ');
 disp('---------------------------------------------------------- ');
-disp([' Experiment ' Stimulus.name ' starting at ' timeStart]);
+disp([' Experiment ' stimulus.name ' starting at ' timeStart]);
 disp('---------------------------------------------------------- ');
 
 %SAVE PARAMETERS
 %--------------------------------------------------------------------------
-if UserSettings.saveParameters
-    ddstimulus = struct(Stimulus);
+if userSettings.saveParameters
+    ddstimulus = struct(stimulus);
     ddstimulus = rmfield(ddstimulus, 'hGui');   % opens figure and causes Matlab to hang
     % DEBUGDATA CREATED HERE!
     debugData.stimulus = ddstimulus;
-    debugData.screenData   = ScreenData;
-    debugData.userSettings = UserSettings;
-    debugData.trialSubset  = TrialSubset;
+    debugData.screenData   = screenData;
+    debugData.userSettings = userSettings;
+    debugData.trialSubset  = trialSubset;
     
-    Stimulus   = formatStimulus(Stimulus); %Parameters used in an easier to read format    
-    pathName   = UserSettings.saveDataPathName;
+    stimulus   = formatStimulus(stimulus); %Parameters used in an easier to read format    
+    pathName   = userSettings.saveDataPathName;
     timeStart  = regexprep(timeStart, ':', '_'); %(replaces ':' with '_' in string)
     
-    fileName   = strcat(pathName, '/', Stimulus.name, '-', timeStart);
+    fileName   = strcat(pathName, '/', stimulus.name, '-', timeStart);
     message    = 'NOTE: THIS RUN WAS ABORTED';
     
     % only save the parameters of the executed trial subset
-    for l=1:length(Stimulus.layers)
-        Stimulus.layers(l).Param = Stimulus.layers(l).Param(TrialSubset);
-        Stimulus.layers(l).settings = Stimulus.layers(l).settings(TrialSubset);
+    for l=1:length(stimulus.layers)
+        stimulus.layers(l).Param = stimulus.layers(l).Param(trialSubset);
+        stimulus.layers(l).settings = stimulus.layers(l).settings(trialSubset);
     end
     
     
-    save(fileName, 'timeStart', 'timeStartPrecision', 'debugData', 'Stimulus', 'message');
+    save(fileName, 'timeStart', 'timeStartPrecision', 'debugData', 'stimulus', 'message');
     disp(['Parameters saved to ' fileName]);
     disp(' ');
 end
@@ -258,17 +290,23 @@ for k=1:length(frameMatrix)
     N = size(frameMatrix{k},2);
     n = 1;
     nd = 0;
+    %Start recording video if desired
+    if recording ~= 0
+        startcam(k,T.pause(z,:),1:length(frameMatrix), video);
+    end
     while (n<=N)
         tic     % measure draw time
         for z=1:(size(frameMatrix{k},1)-1)
             if (frameMatrix{k}(z,n)~=0)
                 %%% Normal mode %%%
-                if Stimulus.layers(z).impulse
+                if stimulus.layers(z).impulse
                     arg_n = 1;
+                    TrialStartTime = datetime;
                 else
                     arg_n = frameMatrix{k}(z,n);
+                    TrialStartTime = datetime;
                 end
-                critInput{z} = fcnDraw{z}(S.wPtr, arg_n, k, ScreenData.ifi, critInput{z});
+                critInput{z} = fcnDraw{z}(S.wPtr, arg_n, k, screenData.ifi, critInput{z});
             end
         end
         Screen('FillRect', S.wPtr, frameMatrix{k}(end,n), S.triggerPos);
@@ -279,7 +317,8 @@ for k=1:length(frameMatrix)
         [vbl, ~, ~, missed, ~] = Screen('Flip', S.wPtr, vbl+(0.7)*S.ifi);
         
         nd = nd+1;
-        dataLog(k,nd).time = toc(critSecStart);      % the time when the Flip finished executing (when the frame was displayed)
+        tStamp = toc(critSecStart);
+        dataLog(k,nd).time = tStamp;                 % the time when the Flip finished executing (when the frame was displayed)
         dataLog(k,nd).frames = frameMatrix{k}(:,n);  % which frame from each layers was displayed, and trigger value
         dataLog(k,nd).missed = missed;               % the 'missed' returned value
         if (missed>0)
@@ -294,6 +333,9 @@ for k=1:length(frameMatrix)
         dataLog(k,nd).frameDelay = missedFrames;
         
         n = n+1+missedFrames;
+    end
+    if video ~= 0
+        stopcam(k, T.pause(z,:), 1:length(frameMatrix), video);
     end
 end
 
@@ -313,7 +355,7 @@ Priority(0); %set normal priority
 % Special stuff for the starfield stimulus which is drawn on a opengl 3d
 % cylinder object
 for z = 1:numLayers
-    if strcmp(func2str(Stimulus.layers(z).fcnPrep),'starfieldCylPrep')
+    if strcmp(func2str(stimulus.layers(z).fcnPrep),'starfieldCylPrep')
         Screen('BeginOpenGL', critInput{z}(1).extendedWinPtr);
         glBindTexture(critInput{z}(1).gltextarget, 0);
         glDisable(critInput{z}(1).gltextarget);
@@ -352,7 +394,7 @@ fprintf('Skipped frames during stimuli: %d out of %d (%.3f%%) -- STIMULUS frame 
 if ssfp > SKIP_PROP_THRESHOLD
     skipped_msg = sprintf('Number of frames skipped exceeds %d%%:\n %d out of %d frames (%.3f%%)\n', SKIP_PROP_THRESHOLD, ssf, totalStimFrames, ssfp);
     msgbox(skipped_msg, 'Warning', 'warn');
-end;
+end
 
 % Check if the skipped frame count is correct
 for i=1:numTrials
@@ -367,13 +409,15 @@ fprintf('Average draw load: %.2f%%, min: %.2f%%, max: %.2f%%, std: %.2f%%\n\n', 
 skippedFrames = sum(skippedFrames);
 
 %SAVE PARAMETERS
-if UserSettings.saveParameters
+if userSettings.saveParameters
     
     debugData.dataLog    = dataLog;
     
-    pathName   = UserSettings.saveDataPathName;    
+    pathName   = userSettings.saveDataPathName;    
     timeFinish = regexprep(timeFinish, ':', '_'); %replaces ':' with '_' in string
-    fileName   = strcat(pathName, '/', Stimulus.name, '-', timeStart);
+    fileName   = strcat(pathName, '/', stimulus.name, '-', timeStart);
+
+
     message    = 'NOTE: STIMULUS PLAYED TO THE END';
     
     try
@@ -382,21 +426,74 @@ if UserSettings.saveParameters
       ddstimulus = rmfield(ddstimulus, 'hGui');   % opens figure and causes Matlab to hang
       debugData.stimulus = ddstimulus; 
         %}
-      save(fileName, 'timeStart', 'timeStartPrecision', 'timeFinish', 'debugData', 'Stimulus', 'message' );
+      save(fileName, 'timeStart', 'timeStartPrecision', 'timeFinish', 'debugData', 'stimulus', 'message' );
+      
+      if recording~=0
+        videoName = strcat(fileName, '.avi');
+        movefile(fullVideoName, videoName);
+      end
     catch e
         disp('Error saving file... Retrying... (1)');
         pause(2);
         try
-            save(fileName, 'timeStart', 'timeStartPrecision', 'timeFinish', 'debugData', 'Stimulus', 'message' );
+            save(fileName, 'timeStart', 'timeStartPrecision', 'timeFinish', 'debugData', 'stimulus', 'message' );
         catch e
             disp('Error saving file... Retrying... (2)');
             pause(2);
-            save(fileName, 'timeStart', 'timeStartPrecision', 'timeFinish', 'debugData', 'Stimulus', 'message' );
+            save(fileName, 'timeStart', 'timeStartPrecision', 'timeFinish', 'debugData', 'stimulus', 'message' );
         end
     end
     
     disp(['Skipped frames and total time saved to ' fileName]);
     disp('---------------------------------------------------------- ');
 else
-    disp(['Parameter saving disabled']);
+    disp('Parameter saving disabled');
+end
+
+%Written By Chris Johnston - chris.johnstonaus@gmail.com 14/04/21
+% Function to start recording from webcam (Current Trial Number, 
+% trial pause times in frames, list of trials)
+function startcam(TRun, Pauset, Tlength, video) 
+if TRun <= length(Tlength)
+    nPause = Pauset(:,TRun); % Current trials Pause time in frames
+    
+    if ((nPause == 0) && (TRun == 1)) % Checks if there is a pause and if it's the first trial
+            start(video); % Starts Recording
+    end
+    if(TRun > 1) % Runs if there is more than one trial
+        lPause = Pauset(:,TRun-1); % Gets previous trial time in frames
+        if((nPause == 0) && (lPause ~= 0)) % Checks if current frame time is 0 and if the last pause time was not 0
+            start(video); % Starts a recording
+        end
+    end
+end
+
+
+function stopcam(TRun, Pauset, Tlength, video)% Function to stop recording video from webcam (Current Trial Number, Current trial pause time in frames, list of trials,Time of Stimulus Start, Stimulus Name)
+if TRun <= length(Tlength) 
+    if(TRun ~= length(Tlength))
+        nPause = Pauset(:,TRun+1);
+    else
+        nPause = Pauset(:,TRun);
+    end  
+    %disp(nPause);
+    if (nPause ~= 0)
+        disp('pause is more than 0, Ending Recording');
+        stop(video);
+        % Double check video has saved properly before moving on
+        while video.FramesAcquired ~= video.DiskLoggerFrameCount
+            pause(.1);
+        end
+    else
+        %disp('Gets this far');
+        L = length(Tlength);
+        if(TRun == L)
+            disp('End of Trials, Ending Recording');
+            stop(video);
+            % Double check video has saved properly before moving on
+            while video.FramesAcquired ~= video.DiskLoggerFrameCount
+                pause(.1);
+            end
+        end
+    end
 end
