@@ -37,14 +37,22 @@ switch Action
         useDefault = 1;
         % If user wants defaults, check for connected cameras
         if recording == 1 && useDefault == 1 
+            adaptor = 0;
             disp("Searching for default camera")
             imaqreset
             for adaptorIndex = 1:length(imaqhwinfo().InstalledAdaptors) 
-                adaptor = imaqhwinfo().InstalledAdaptors{adaptorIndex};
-                if isempty(imaqhwinfo(adaptor).DeviceIDs) == 0, break; end
+                testAdaptor = imaqhwinfo().InstalledAdaptors{adaptorIndex};
+                if isempty(imaqhwinfo(testAdaptor).DeviceIDs) == 1, continue; end
+                adaptor = testAdaptor;
+                break
             end
-            screenData.videoAdaptor = adaptor;
-            disp("The camera adaptor has defaulted to: " + adaptor);
+            if adaptor
+                screenData.videoAdaptor = adaptor;
+                disp("The camera adaptor has defaulted to: " + adaptor);
+            else
+                warning("No video device detected! Recording settings have been turned off. Re-enable them and re-initialise screen after device has been connected.")
+                screenData.recording = 0;
+            end
         end
         
         AssertOpenGL; %Check if openGL is available
