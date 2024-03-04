@@ -15,17 +15,6 @@ function skippedFrames = animationLoop(stimulus, screenData, userSettings, trial
 % proceeds to the next frame. 
 % 
 
- 
-
-% recording = screenData.recording;
-% if recording
-%     video = getappdata(0, 'video');
-%     delete(video)                                        %Kill video connection
-%     clear video
-% end
-
-
-
 %--------------------------------------------------------------------------
 % FlyFly v2
 %
@@ -42,10 +31,6 @@ numRuns   = length(trialSubset);
 
 critInput = cell(numLayers,1);
 fcnDraw = cell(numLayers,1);
-
-% Do we want to record video?
-% 0 for false, 1 for true
-recording = screenData.recording;
 
 navData = getappdata(0, 'navData');
 
@@ -160,7 +145,7 @@ fprintf('Done!\n');
 triggerFlickOffset = 105;
 
 % Set up connection to cammera equipment
-if recording ~= 0
+if S.recording ~= 0
     % Create video object
     video = videoinput(screenData.videoAdaptor, 1);
     % Set up location and filename
@@ -174,6 +159,7 @@ if recording ~= 0
     % Configure the device to log to disk using the video writer
     video.LoggingMode = "disk";
     video.DiskLogger = logfile;
+    % Make sure camera records until we tell it to stop
     video.FramesPerTrigger = Inf;
 end
 
@@ -201,7 +187,7 @@ for k=1:numRuns
         end
         if any(frames(1:end-1))  % this would be false if all layers are in pre or post stim time
             totalStimFrames = totalStimFrames + 1;
-        end;
+        end
         if n>max(T.preStim(:,k)+T.time(:,k)+T.postStim(:,k))
             frames(end) = S.triggerRGBoff;
         else
@@ -226,7 +212,7 @@ Screen('BlendFunction', S.wPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, [1 1 1 1])
 newPrio = MaxPriority(S.wPtr); %Find max prio of screen
 Priority(newPrio);             %Set max prio
 
-timeStart          = datestr(now, 0); %time as datestr
+timeStart          = datetime('now'); %time as datestr
 timeStartPrecision = clock; %exact time (ms precision) as time vector
 
 disp(' ');
@@ -283,15 +269,13 @@ critSecStart = tic;
 
 drawTime = [];
 
-missedFrames = 0;
-
 for k=1:length(frameMatrix)
     fprintf(' - TRIAL %d starting at %.6f s -\n\n',k,toc(critSecStart));
     N = size(frameMatrix{k},2);
     n = 1;
     nd = 0;
     %Start recording video if desired
-    if recording ~= 0
+    if S.recording ~= 0
         startcam(k,T.pause(z,:),1:length(frameMatrix), video);
     end
     while (n<=N)
@@ -301,10 +285,8 @@ for k=1:length(frameMatrix)
                 %%% Normal mode %%%
                 if stimulus.layers(z).impulse
                     arg_n = 1;
-                    TrialStartTime = datetime;
                 else
                     arg_n = frameMatrix{k}(z,n);
-                    TrialStartTime = datetime;
                 end
                 critInput{z} = fcnDraw{z}(S.wPtr, arg_n, k, screenData.ifi, critInput{z});
             end
@@ -334,7 +316,7 @@ for k=1:length(frameMatrix)
         
         n = n+1+missedFrames;
     end
-    if recording ~= 0
+    if S.recording ~= 0
         stopcam(k, T.pause(z,:), 1:length(frameMatrix), video);
     end
 end
@@ -428,16 +410,16 @@ if userSettings.saveParameters
         %}
       save(fileName, 'timeStart', 'timeStartPrecision', 'timeFinish', 'debugData', 'stimulus', 'message' );
       
-      if recording~=0
+      if S.recording~=0
         videoName = strcat(fileName, '.avi');
         movefile(fullVideoName, videoName);
       end
-    catch e
+    catch
         disp('Error saving file... Retrying... (1)');
         pause(2);
         try
             save(fileName, 'timeStart', 'timeStartPrecision', 'timeFinish', 'debugData', 'stimulus', 'message' );
-        catch e
+        catch
             disp('Error saving file... Retrying... (2)');
             pause(2);
             save(fileName, 'timeStart', 'timeStartPrecision', 'timeFinish', 'debugData', 'stimulus', 'message' );

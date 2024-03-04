@@ -28,9 +28,15 @@ Version History
 ------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
-4.0 Updates
+4.X Updates
 ------------------------------------------------------------------------------------------
+4.1
 
+* Added camera functionality to FlyFly; users can now select an option in the settings where if they have a camera connected, a video will start recording whilst the stimuli is being shown.
+* Added rotated screen functionality; users with rotated screen setups can now click an option in the settings that will rotate the stimulus by 90 degrees for them.
+* Removed Dlp monitor support
+
+------------------------------------------------------------------------------------------
 4.0
 
 * New numbered version as due to sweeping compatability changes that allows Flyfly to run on modern software

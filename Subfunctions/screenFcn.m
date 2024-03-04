@@ -32,24 +32,30 @@ switch Action
         screenPartial = screenData.partial;
         screenNumber  = screenData.screenNumber;
 
-        % Check if recording a video is selected
+        % Check if recording video data
         recording = screenData.recording;
         useDefault = 1;
+
         % If user wants defaults, check for connected cameras
         if recording == 1 && useDefault == 1 
             adaptor = 0;
             disp("Searching for default camera")
             imaqreset
+            % Loop over all adaptors to find connected cameras
             for adaptorIndex = 1:length(imaqhwinfo().InstalledAdaptors) 
                 testAdaptor = imaqhwinfo().InstalledAdaptors{adaptorIndex};
                 if isempty(imaqhwinfo(testAdaptor).DeviceIDs) == 1, continue; end
+                % If camera found, break from loop
                 adaptor = testAdaptor;
                 break
             end
+
+            % Confirm to user which adaptor is being used
             if adaptor
                 screenData.videoAdaptor = adaptor;
                 disp("The camera adaptor has defaulted to: " + adaptor);
-            else
+            % If no cameras connected, don't record and warn user
+            else 
                 warning("No video device detected! Recording settings have been turned off. Re-enable them and re-initialise screen after device has been connected.")
                 screenData.recording = 0;
             end
