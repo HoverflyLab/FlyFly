@@ -212,12 +212,12 @@ Screen('BlendFunction', S.wPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, [1 1 1 1])
 newPrio = MaxPriority(S.wPtr); %Find max prio of screen
 Priority(newPrio);             %Set max prio
 
-timeStart          = datetime('now'); %time as datestr
+timeStart          = string(datetime('now')); %time as datestr
 timeStartPrecision = clock; %exact time (ms precision) as time vector
 
 disp(' ');
 disp('---------------------------------------------------------- ');
-disp([' Experiment ' stimulus.name ' starting at ' timeStart]);
+disp(' Experiment ' + stimulus.name + ' starting at ' + timeStart);
 disp('---------------------------------------------------------- ');
 
 %SAVE PARAMETERS

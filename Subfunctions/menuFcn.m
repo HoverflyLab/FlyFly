@@ -66,8 +66,13 @@ switch Option
                 
                 tempData = getappdata(0, 'screenData');
                 
-                %load old screen values if no screen is currently active
+                % Load old screen values if no screen is currently active
                 if ~tempData.isInit
+                    % When running old stimuli, check for existence of new
+                    % variables and add if not present
+                    if ~isfield(screenData, "videoAdaptor")
+                        screenData.videoAdaptor = "Default";
+                    end
                     setappdata(0, 'screenData' , screenData);
                 end
                 

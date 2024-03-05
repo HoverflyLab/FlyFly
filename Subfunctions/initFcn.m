@@ -67,6 +67,7 @@ switch Option
         % New variables
         screenData.recording     = 0;
         screenData.useRotated    = 0;
+        screenData.videoAdaptor  = "Default";
         screenData.monitorHeight = 27.5;
         screenData.flyDistance   = 14;
         
