@@ -51,6 +51,7 @@ S.recording     = screenData.recording;
 S.monitorHeight = screenData.monitorHeight;
 S.triggerRGBon  = screenData.triggerRGBon;
 S.triggerRGBoff = screenData.triggerRGBoff;
+cameraSettings  = screenData.cameraSettings;
 
 S.bgColor       = screenData.bgColor; 
 
@@ -161,6 +162,18 @@ if S.recording ~= 0
     video.DiskLogger = logfile;
     % Make sure camera records until we tell it to stop
     video.FramesPerTrigger = Inf;
+
+    % Apply all user selected camera settings
+    vidSrc = getselectedsourc(video);
+    vidSrc.Brightness = 0;
+    vidSrc.Contrast = 0;
+    vidSrc.FrameRate = 0;
+    vidSrc.HorizontalFlip = 0;
+    vidSrc.VerticalFlip = 0;
+    vidSrc.PowerLineFrequency = 0;
+    vidSrc.Saturation = 0;
+    vidSrc.Sharpness = 0;
+    vidSrc.WhiteBalanceMode = 0;
 end
 
 T.trialFrames = T.preStim + T.time + T.postStim + T.pause;
