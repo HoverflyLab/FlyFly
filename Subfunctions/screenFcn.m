@@ -42,7 +42,7 @@ switch Action
             disp("Searching for default camera")
             imaqreset
             % Loop over all adaptors to find connected cameras
-            for adaptorIndex = 1:length(imaqhwinfo().InstalledAdaptors) 
+            for adaptorIndex = 1:length(imaqhwinfo().InstalledAdaptors)
                 testAdaptor = imaqhwinfo().InstalledAdaptors{adaptorIndex};
                 if isempty(imaqhwinfo(testAdaptor).DeviceIDs) == 1, continue; end
                 % If camera found, break from loop

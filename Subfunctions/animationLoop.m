@@ -363,6 +363,11 @@ for z = 1:numLayers
     end
 end
 
+% Delete video object to release memory
+if S.recording ~= 0
+    delete(video);
+end
+
 numTrials = size(dataLog,1);
 frames = zeros(numTrials,1);
 skippedFrames = zeros(numTrials,1);
