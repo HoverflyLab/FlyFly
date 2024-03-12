@@ -162,18 +162,21 @@ if S.recording ~= 0
     video.DiskLogger = logfile;
     % Make sure camera records until we tell it to stop
     video.FramesPerTrigger = Inf;
+end
 
+if S.recording ~= 0 && screenData.videoAdaptor == "linuxvideo" && isfield(screenData, "webcamSettings")
     % Apply all user selected camera settings
-    vidSrc = getselectedsourc(video);
-    vidSrc.Brightness = 0;
-    vidSrc.Contrast = 0;
-    vidSrc.FrameRate = 0;
-    vidSrc.HorizontalFlip = 0;
-    vidSrc.VerticalFlip = 0;
-    vidSrc.PowerLineFrequency = 0;
-    vidSrc.Saturation = 0;
-    vidSrc.Sharpness = 0;
-    vidSrc.WhiteBalanceMode = 0;
+    vidSrc = getselectedsource(video);
+    wcSettings = screenData.webcamSettings;
+    vidSrc.Brightness = wcSettings.Brightness;
+    vidSrc.Contrast = wcSettings.Contrast;
+    vidSrc.FrameRate = wcSettings.FrameRate;
+    vidSrc.HorizontalFlip = wcSettings.HorizontalFlip;
+    vidSrc.VerticalFlip = wcSettings.VerticalFlip;
+    vidSrc.PowerLineFrequency = wcSettings.PowerLineFrequency;
+    vidSrc.Saturation = wcSettings.Saturation;
+    vidSrc.Sharpness = wcSettings.Sharpness;
+    vidSrc.WhiteBalanceMode = wcSettings.WhiteBalanceMode;
 end
 
 T.trialFrames = T.preStim + T.time + T.postStim + T.pause;
