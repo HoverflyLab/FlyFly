@@ -106,7 +106,7 @@ switch Action
         
         screenData.isInit = 0;
         screenData.inUse  = 0;
-         screenData.bgColor        = -1;   
+        screenData.bgColor       = -1;   
         screenData.beforeBgColor = -1;
         setappdata(0, 'screenData', screenData);
         
