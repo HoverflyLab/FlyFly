@@ -36,6 +36,12 @@ switch Action
         recording = screenData.recording;
         videoAdaptor = screenData.videoAdaptor;
 
+        %If required by user, rotate screen 90 degrees
+        if screenData.useRotated == 1
+            PsychImaging('PrepareConfiguration');
+            PsychImaging('AddTask', 'General', 'UseDisplayRotation', -90);
+        end
+
         % If user wants defaults, check for connected cameras
         if recording == 1 && videoAdaptor == "Default" 
             adaptor = 0;
@@ -80,15 +86,6 @@ switch Action
             else
                 [wPtr,rect] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, ...
                     [], [], [], [], [], kPsychNeedFastOffscreenWindows);%fullscreen
-            end
-
-            %If required by user, rotate screen 90 degrees
-            if screenData.useRotated ~= 1
-                PsychImaging('PrepareConfiguration');
-                PsychImaging('AddTask', 'General', 'UseDisplayRotation', -90);
-            else
-                PsychImaging('PrepareConfiguration');
-                PsychImaging('AddTask', 'General', 'UseDisplayRotation', 0);
             end
 
             screenData.bgColor = chstimuli(index).targetBgColor;
