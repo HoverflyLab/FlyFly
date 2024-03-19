@@ -51,7 +51,7 @@ S.recording     = screenData.recording;
 S.monitorHeight = screenData.monitorHeight;
 S.triggerRGBon  = screenData.triggerRGBon;
 S.triggerRGBoff = screenData.triggerRGBoff;
-cameraSettings  = screenData.cameraSettings;
+% cameraSettings  = screenData.cameraSettings;
 
 S.bgColor       = screenData.bgColor; 
 
@@ -148,7 +148,13 @@ triggerFlickOffset = 105;
 % Set up connection to cammera equipment
 if S.recording ~= 0
     % Create video object
-    video = videoinput(screenData.videoAdaptor, 1);
+    if isfield(screenData, "webcamSettings")
+        video = videoinput(screenData.videoAdaptor, 1, ...
+            screenData.webcamSettings.videoFormat);
+        disp(screenData.webcamSettings.videoFormat);
+    else
+        video = videoinput(screenData.videoAdaptor, 1);
+    end
     % Set up location and filename
     videoLocation = navData.saveDataPathName;
     videoName = "recording1.avi";
@@ -233,7 +239,7 @@ timeStartPrecision = clock; %exact time (ms precision) as time vector
 
 disp(' ');
 disp('---------------------------------------------------------- ');
-disp(' Experiment ' + stimulus.name + ' starting at ' + timeStart);
+disp(" Experiment " + string(stimulus.name) + " starting at " + timeStart);
 disp('---------------------------------------------------------- ');
 
 %SAVE PARAMETERS

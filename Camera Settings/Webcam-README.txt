@@ -8,7 +8,12 @@ on a new FlyFly project is 'faintWings.csv'.
 EDITABLE OPTIONS
 Brightness			:  0 - 255
 Contrast			:  0 - 255
-FrameRate			: "60", "50", "40", "30", "15" % Dependant on webcam
+% Determines what frame rates can be used
+videoFormat         : "YUY2_320x240", "YUY2_640x480" 
+% For 640 x 480 PS3 camera
+FrameRate			: "60", "50", "40", "30", "15" 
+% For 320 x 240 PS3 camera
+FrameRate			: "187", "150", "137", "125", "100", "75", "60", "50", "40", "30", "15" 
 HorizontalFlip		: "off", "on"  
 VerticalFlip		: "off", "on"
 PowerLineFrequency	: "Disabled", "50 Hz"
