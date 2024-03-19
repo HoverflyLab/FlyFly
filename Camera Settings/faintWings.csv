@@ -1,2 +1,2 @@
 Brightness,Contrast,FrameRate,HorizontalFlip,VerticalFlip,PowerLineFrequency,Saturation,Sharpness,WhiteBalanceMode,videoFormat
-0,20,100,off,off,Disabled,0,0,manual,YUY2_320x240
+0,20,100,off,off,Disabled,0,0,manual,YV12_320x240

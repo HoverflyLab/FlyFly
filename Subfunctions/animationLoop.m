@@ -51,7 +51,6 @@ S.recording     = screenData.recording;
 S.monitorHeight = screenData.monitorHeight;
 S.triggerRGBon  = screenData.triggerRGBon;
 S.triggerRGBoff = screenData.triggerRGBoff;
-% cameraSettings  = screenData.cameraSettings;
 
 S.bgColor       = screenData.bgColor; 
 
@@ -151,7 +150,6 @@ if S.recording ~= 0
     if isfield(screenData, "webcamSettings")
         video = videoinput(screenData.videoAdaptor, 1, ...
             screenData.webcamSettings.videoFormat);
-        disp(screenData.webcamSettings.videoFormat);
     else
         video = videoinput(screenData.videoAdaptor, 1);
     end
@@ -286,6 +284,14 @@ Screen('FillRect', S.wPtr, S.triggerRGBoff, S.triggerPos); %trigger off
 %--------------------------------------------------------------------------
 
 vbl = Screen('Flip', S.wPtr);
+
+% Turn on camera and delay to account for stutters
+if S.recording ~= 0
+    preview(video)
+    pause('on')
+    pause(2)
+    pause('off')
+end
 
 critSecStart = tic;
 
@@ -463,16 +469,23 @@ end
 % Function to start recording from webcam (Current Trial Number, 
 % trial pause times in frames, list of trials)
 function startcam(TRun, Pauset, Tlength, video) 
+
 if TRun <= length(Tlength)
     nPause = Pauset(:,TRun); % Current trials Pause time in frames
-    
+
     if ((nPause == 0) && (TRun == 1)) % Checks if there is a pause and if it's the first trial
             start(video); % Starts Recording
+            %Wait for camera to start running
+            while ~isrunning(video)
+            end
     end
     if(TRun > 1) % Runs if there is more than one trial
         lPause = Pauset(:,TRun-1); % Gets previous trial time in frames
         if((nPause == 0) && (lPause ~= 0)) % Checks if current frame time is 0 and if the last pause time was not 0
             start(video); % Starts a recording
+            % Wait for camera to start running
+            while ~isrunning(video)
+            end
         end
     end
 end
@@ -489,6 +502,7 @@ if TRun <= length(Tlength)
     if (nPause ~= 0)
         disp('pause is more than 0, Ending Recording');
         stop(video);
+        closepreview(video);
         % Double check video has saved properly before moving on
         while video.FramesAcquired ~= video.DiskLoggerFrameCount
             pause(.1);
@@ -499,6 +513,7 @@ if TRun <= length(Tlength)
         if(TRun == L)
             disp('End of Trials, Ending Recording');
             stop(video);
+            closepreview(video);
             % Double check video has saved properly before moving on
             while video.FramesAcquired ~= video.DiskLoggerFrameCount
                 pause(.1);
