@@ -1,4 +1,4 @@
-function skippedFrames = animationLoop(stimulus, screenData, userSettings, trialSubset)
+function skippedFrames = animationLoop(stimulus, screenData, userSettings, trialSubset, previewChoice)
 %function skippedFrames = animationLoop(Stimulus, ScreenData, UserSettings, TrialSubset, video)
 % 
 % This functions runs the loop that draws the stimuli to the screen in
@@ -340,8 +340,11 @@ for k=1:length(frameMatrix)
         else
             missedFrames = 0;
         end
+
+        if previewChoice == 1
+            drawnow
+        end
         dataLog(k,nd).frameDelay = missedFrames;
-        
         n = n+1+missedFrames;
     end
     if S.recording ~= 0
@@ -475,17 +478,11 @@ if TRun <= length(Tlength)
 
     if ((nPause == 0) && (TRun == 1)) % Checks if there is a pause and if it's the first trial
             start(video); % Starts Recording
-            %Wait for camera to start running
-            while ~isrunning(video)
-            end
     end
     if(TRun > 1) % Runs if there is more than one trial
         lPause = Pauset(:,TRun-1); % Gets previous trial time in frames
         if((nPause == 0) && (lPause ~= 0)) % Checks if current frame time is 0 and if the last pause time was not 0
             start(video); % Starts a recording
-            % Wait for camera to start running
-            while ~isrunning(video)
-            end
         end
     end
 end
