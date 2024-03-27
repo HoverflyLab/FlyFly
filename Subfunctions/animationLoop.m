@@ -181,6 +181,7 @@ if S.recording ~= 0 && screenData.videoAdaptor == "linuxvideo" && isfield(screen
     vidSrc.Saturation = wcSettings.Saturation;
     vidSrc.Sharpness = wcSettings.Sharpness;
     vidSrc.WhiteBalanceMode = wcSettings.WhiteBalanceMode;
+    video.ReturnedColorspace = wcSettings.ReturnedColorspace;
 end
 
 T.trialFrames = T.preStim + T.time + T.postStim + T.pause;
@@ -287,7 +288,7 @@ vbl = Screen('Flip', S.wPtr);
 
 % Turn on camera and delay to account for stutters
 if S.recording ~= 0
-    preview(video)
+    preview(video);
     pause('on')
     pause(2)
     pause('off')
@@ -342,7 +343,7 @@ for k=1:length(frameMatrix)
         end
 
         if previewChoice == 1
-            drawnow
+            drawnow 
         end
         dataLog(k,nd).frameDelay = missedFrames;
         n = n+1+missedFrames;
