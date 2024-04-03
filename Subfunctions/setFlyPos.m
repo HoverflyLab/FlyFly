@@ -1,4 +1,4 @@
-function [x1 y1 x2 y2] = setFlyPos(ScreenSettings)
+function [x1, y1] = setFlyPos(ScreenSettings)
 % function [x1 y1 x2 y2] = setFlyPos(ScreenSettings)
 %
 % lets the user mark two positions on the screen (x1, y1) and (x2, y2) and
@@ -49,9 +49,6 @@ while go
         numClicks = numClicks+1;
         if numClicks == 1
             flyPos = [mX, mY];
-            disp('Put marker where Mr. Fly is looking')
-        elseif numClicks == 2
-            flyMidline = [mX, mY];
             disp('Press left button to confirm, right button to restart');
         else
             disp('Mr. Fly says "Thank You!"')
@@ -77,10 +74,6 @@ while go
         Screen('DrawLine', wPtr, [200 200 200], 0, flyPos(2), rect(3), flyPos(2));
         Screen('DrawLine', wPtr, [200 200 200], flyPos(1), 0, flyPos(1), rect(4));
         Screen('FillOval', wPtr, [200 200 200], [flyPos(1)-3  flyPos(2)-3  flyPos(1)+3  flyPos(2)+3]); 
-        
-        Screen('DrawLine', wPtr, [200 200 200], 0, flyMidline(2), rect(3), flyMidline(2));
-        Screen('DrawLine', wPtr, [200 200 200], flyMidline(1), 0, flyMidline(1), rect(4));
-        Screen('FillOval', wPtr, [200 200 200], [flyMidline(1)-3  flyMidline(2)-3  flyMidline(1)+3  flyMidline(2)+3]); 
     end
     
     Screen('Flip', wPtr, vbl+0.7*ifi);
@@ -89,9 +82,6 @@ end
 
 disp(' ');
 disp(['Fly height: ' num2str(flyPos(1)) 'x, ' num2str(flyPos(2)) 'y (px)']);
-disp(['Fly eye focus: ' num2str(flyMidline(1)) 'x, ' num2str(flyMidline(2)) 'y (px)']);
 
 x1 = flyPos(1);
 y1 = flyPos(2);
-x2 = flyMidline(1);
-y2 = flyMidline(2);

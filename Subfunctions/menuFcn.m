@@ -149,7 +149,7 @@ switch Option
                 
             else
                 disp('incorrect file');
-            end;
+            end
             
         end
         

@@ -81,7 +81,7 @@ switch Option
         screenData.bgColor        = -1;   
         screenData.beforeBgColor = -1;
         screenData.triggerPos     = [0 430 50 480];    %size of trigger, width, height
-        screenData.flyPos         = [320 240 320 240]; %fly position in from of monitor
+        screenData.flyPos         = [320 240]; %fly position in from of monitor
         
         init = screenData; %return new values
         

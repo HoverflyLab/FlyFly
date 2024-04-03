@@ -206,8 +206,6 @@ switch Action
         
         flyPos(1)     = screenData.flyPos(1);
         flyPos(2)     = screenData.flyPos(2);
-        flyMidline(1) = screenData.flyPos(3);
-        flyMidline(2) = screenData.flyPos(4);
         
         wPtr = screenData.wPtr;
         rect = screenData.rect;
@@ -215,17 +213,12 @@ switch Action
         Screen('DrawLine', wPtr, [200 200 200], 0, flyPos(2), rect(3), flyPos(2));
         Screen('DrawLine', wPtr, [200 200 200], flyPos(1), 0, flyPos(1), rect(4));
         Screen('FillOval', wPtr, [200 200 200], [flyPos(1)-3  flyPos(2)-3  flyPos(1)+3  flyPos(2)+3]);
-        
-        Screen('DrawLine', wPtr, [200 200 200], 0, flyMidline(2), rect(3), flyMidline(2));
-        Screen('DrawLine', wPtr, [200 200 200], flyMidline(1), 0, flyMidline(1), rect(4));
-        Screen('FillOval', wPtr, [200 200 200], [flyMidline(1)-3  flyMidline(2)-3  flyMidline(1)+3  flyMidline(2)+3]);
-        
+                
         %Screen('FillRect', navData.screenWptr, [255 255 255]);
         Screen('FillRect', screenData.wPtr, screenData.triggerRGBoff, screenData.triggerPos); %trigger off
         Screen(screenData.wPtr, 'Flip');
         
         disp(['Fly mark one: ' num2str(flyPos(1)) 'x, ' num2str(flyPos(2)) 'y']);
-        disp(['Fly mark two: ' num2str(flyMidline(1)) 'x, ' num2str(flyMidline(2)) 'y']);
         
     otherwise
         disp(['screenFcn: Incorrect Action string (' Action ')']);
