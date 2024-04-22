@@ -48,6 +48,7 @@ S.ifi           = screenData.ifi;
 S.flyPos        = screenData.flyPos;
 S.rect          = screenData.rect;
 S.recording     = screenData.recording;
+S.useGuvcview   = screenData.useGuvcview;
 S.monitorHeight = screenData.monitorHeight;
 S.triggerRGBon  = screenData.triggerRGBon;
 S.triggerRGBoff = screenData.triggerRGBoff;
@@ -145,7 +146,7 @@ fprintf('Done!\n');
 triggerFlickOffset = 105;
 
 % Set up connection to cammera equipment
-if S.recording ~= 0
+if S.recording ~= 0 && S.useGuvcview ~= 1
     % Create video object
     if isfield(screenData, "webcamSettings")
         video = videoinput(screenData.videoAdaptor, 1, ...
@@ -168,7 +169,7 @@ if S.recording ~= 0
     video.FramesPerTrigger = Inf;
 end
 
-if S.recording ~= 0 && screenData.videoAdaptor == "linuxvideo" && isfield(screenData, "webcamSettings")
+if S.recording ~= 0 && S.useGuvcview ~= 1 && screenData.videoAdaptor == "linuxvideo" && isfield(screenData, "webcamSettings")
     % Apply all user selected camera settings
     vidSrc = getselectedsource(video);
     wcSettings = screenData.webcamSettings;
@@ -287,7 +288,7 @@ Screen('FillRect', S.wPtr, S.triggerRGBoff, S.triggerPos); %trigger off
 vbl = Screen('Flip', S.wPtr);
 
 % Turn on camera and delay to account for stutters
-if S.recording ~= 0
+if S.recording ~= 0 && S.useGuvcview == 0
     preview(video);
     pause('on')
     pause(2)
@@ -305,8 +306,14 @@ for k=1:length(frameMatrix)
     nd = 0;
     %Start recording video if desired
     if S.recording ~= 0
-        startcam(k,T.pause(z,:),1:length(frameMatrix), video);
+        switch S.useGuvcview
+            case 0
+                startCam(k,T.pause(z,:),1:length(frameMatrix), video);
+            case 1
+                startGuvcview(k,T.pause(z,:),1:length(frameMatrix));
+        end
     end
+        
     while (n<=N)
         tic     % measure draw time
         for z=1:(size(frameMatrix{k},1)-1)
@@ -349,7 +356,12 @@ for k=1:length(frameMatrix)
         n = n+1+missedFrames;
     end
     if S.recording ~= 0
-        stopcam(k, T.pause(z,:), 1:length(frameMatrix), video);
+        switch S.useGuvcview
+            case 0
+                stopCam(k, T.pause(z,:), 1:length(frameMatrix), video);
+            case 1
+                stopGuvcview(k, T.pause(z,:), 1:length(frameMatrix), T.pause(z,:), 1:length(frameMatrix));
+        end
     end
 end
 
@@ -380,7 +392,7 @@ for z = 1:numLayers
 end
 
 % Delete video object to release memory
-if S.recording ~= 0
+if S.recording ~= 0 && S.useGuvcview == 0
     delete(video);
 end
 
@@ -472,7 +484,7 @@ end
 %Written By Chris Johnston - chris.johnstonaus@gmail.com 14/04/21
 % Function to start recording from webcam (Current Trial Number, 
 % trial pause times in frames, list of trials)
-function startcam(TRun, Pauset, Tlength, video) 
+function startCam(TRun, Pauset, Tlength, video) 
 
 if TRun <= length(Tlength)
     nPause = Pauset(:,TRun); % Current trials Pause time in frames
@@ -489,7 +501,7 @@ if TRun <= length(Tlength)
 end
 
 
-function stopcam(TRun, Pauset, Tlength, video)% Function to stop recording video from webcam (Current Trial Number, Current trial pause time in frames, list of trials,Time of Stimulus Start, Stimulus Name)
+function stopCam(TRun, Pauset, Tlength, video)% Function to stop recording video from webcam (Current Trial Number, Current trial pause time in frames, list of trials,Time of Stimulus Start, Stimulus Name)
 if TRun <= length(Tlength) 
     if(TRun ~= length(Tlength))
         nPause = Pauset(:,TRun+1);
@@ -516,6 +528,83 @@ if TRun <= length(Tlength)
             while video.FramesAcquired ~= video.DiskLoggerFrameCount
                 pause(.1);
             end
+        end
+    end
+end
+
+function startGuvcview(TRun, Pauset, Tlength) % Function to start recording from webcam (Current Trial Number, trial pause times in frames, list of trials)
+command = 'bash RecordCam.sh &'; % links to bash script that is used to start/stop recording
+if TRun <= length(Tlength)
+    nPause = Pauset(:,TRun); % Current trials Pause time in frames
+    
+    if ((nPause == 0) && (TRun == 1)) % Checks if there is a pause and if it's the first trial
+            %disp('Ran Start');
+            TrialStartTime = datestr(now, 0);
+            [status, cmdOut] = system(command, '-echo'); % Starts Recording
+    end
+    if(TRun > 1) % Runs if there is more than one trial
+        lPause = Pauset(:,TRun-1); % Gets previous trial time in frames
+        if((nPause == 0) && (lPause ~= 0)) % Checks if current frame time is 0 and if the last pause time was not 0
+            %disp('Ran Start Middle');
+            [status, cmdOut] = system(command, '-echo'); % Starts a recording
+            TrialStartTime = datestr(now, 0);
+        end
+    end
+end
+
+
+function stopGuvcview(TRun, Pauset, Tlength,TrialStartTime,tStamp,pathName)% Function to stop recording video from webcam (Current Trial Number, Current trial pause time in frames, list of trials,Time of Stimulus Start, Stimulus Name)
+    command = 'bash RecordCam.sh &';
+    %disp('end record');
+
+if TRun <= length(Tlength) 
+    tStamp = floor(tStamp);
+    if(TRun ~= length(Tlength))
+        nPause = Pauset(:,TRun+1);
+    else
+        nPause = Pauset(:,TRun);
+    end  
+    %disp(nPause);
+    if (nPause ~= 0)
+        clear newVideoName concat finalTime addTime2 timeR timeNum addTime
+        addTime2 = seconds(tStamp);
+        addTime = 5;
+        timeR = TrialStartTime;
+        timeR  = regexprep(timeR, ':', '_');
+        finalTime = timeR;
+        %finalTime = regexprep(timeR, ':', '_');
+        disp('pause is more than 0, Ending Recording');
+        [status, cmdOut] = system(command, '-echo');
+        disp(finalTime);
+        newVideoName=['Video_',finalTime];
+        videopath = strrep(pathName,'parameters','video/');
+        if ~exist(videopath, 'dir')
+               mkdir(videopath); 
+        end
+        concat=[videopath,newVideoName,'.mp4'];
+        concat=regexprep(concat, ':', '_');
+        movefile('./Saved Data/capture.mp4',concat);
+    else
+        %disp('Gets this far');
+        L = length(Tlength);
+        if(TRun == L)
+            clear newVideoName concat finalTime addTime2 timeR timeNum addTime
+            addTime2 = seconds(tStamp);
+            addTime = 5;
+            timeR = TrialStartTime;
+            timeR  = regexprep(timeR, ':', '_');
+            finalTime = timeR;
+            disp('End of Trials, Ending Recording');
+            [status, cmdOut] = system(command, '-echo');
+            %disp(addTime2);
+            newVideoName=['Video_',finalTime];
+            videopath = strrep(pathName,'parameters','video/');
+            if ~exist(videopath, 'dir')
+                   mkdir(videopath); 
+            end
+            concat=[videopath,newVideoName,'.mp4'];
+            concat=regexprep(concat, ':', '_');
+            movefile('./Saved Data/capture.mp4',concat);
         end
     end
 end

@@ -73,6 +73,9 @@ switch Option
                     if ~isfield(screenData, "videoAdaptor")
                         screenData.videoAdaptor = "Default";
                     end
+                    if ~isfield(screenData, "useGuvcview")
+                        screenData.useGuvcview = 0;
+                    end
                     setappdata(0, 'screenData' , screenData);
                 end
                 
