@@ -145,6 +145,12 @@ fprintf('Done!\n');
 % RGB difference between each trigger frame
 triggerFlickOffset = 105;
 
+
+% Set up location and filename for video recordings
+videoLocation = navData.saveDataPathName;
+videoName = "recording1.mp4";
+fullVideoName = fullfile(videoLocation, videoName);
+
 % Set up connection to cammera equipment
 if S.recording ~= 0 && S.useGuvcview ~= 1
     % Create video object
@@ -156,7 +162,7 @@ if S.recording ~= 0 && S.useGuvcview ~= 1
     end
     % Set up location and filename
     videoLocation = navData.saveDataPathName;
-    videoName = "recording1.avi";
+    videoName = "recording1.mp4";
     fullVideoName = fullfile(videoLocation, videoName);
     
     % Create and configure the video writer
@@ -360,7 +366,7 @@ for k=1:length(frameMatrix)
             case 0
                 stopCam(k, T.pause(z,:), 1:length(frameMatrix), video);
             case 1
-                stopGuvcview(k, T.pause(z,:), 1:length(frameMatrix), T.pause(z,:), 1:length(frameMatrix));
+                fullVideoName = stopGuvcview(k, T.pause(z,:), 1:length(frameMatrix), timeStart, userSettings.saveDataPathName);
         end
     end
 end
@@ -460,7 +466,7 @@ if userSettings.saveParameters
       save(fileName, 'timeStart', 'timeStartPrecision', 'timeFinish', 'debugData', 'stimulus', 'message' );
       
       if S.recording~=0
-        videoName = strcat(fileName, '.avi');
+        videoName = strcat(fileName, '.mp4');
         movefile(fullVideoName, videoName);
       end
     catch
@@ -553,12 +559,11 @@ if TRun <= length(Tlength)
 end
 
 
-function stopGuvcview(TRun, Pauset, Tlength,TrialStartTime,tStamp,pathName)% Function to stop recording video from webcam (Current Trial Number, Current trial pause time in frames, list of trials,Time of Stimulus Start, Stimulus Name)
-    command = 'bash RecordCam.sh &';
-    %disp('end record');
+function fullVideoName = stopGuvcview(TRun, Pauset, Tlength,TrialStartTime,pathName)% Function to stop recording video from webcam (Current Trial Number, Current trial pause time in frames, list of trials,Time of Stimulus Start, Stimulus Name)
+command = 'bash RecordCam.sh &';
+%disp('end record');
 
 if TRun <= length(Tlength) 
-    tStamp = floor(tStamp);
     if(TRun ~= length(Tlength))
         nPause = Pauset(:,TRun+1);
     else
@@ -566,45 +571,44 @@ if TRun <= length(Tlength)
     end  
     %disp(nPause);
     if (nPause ~= 0)
-        clear newVideoName concat finalTime addTime2 timeR timeNum addTime
-        addTime2 = seconds(tStamp);
-        addTime = 5;
+        clear newVideoName concat finalTime timeR timeNum
         timeR = TrialStartTime;
         timeR  = regexprep(timeR, ':', '_');
         finalTime = timeR;
         %finalTime = regexprep(timeR, ':', '_');
         disp('pause is more than 0, Ending Recording');
-        [status, cmdOut] = system(command, '-echo');
+        [~, ~] = system(command, '-echo');
         disp(finalTime);
-        newVideoName=['Video_',finalTime];
-        videopath = strrep(pathName,'parameters','video/');
+        newVideoName='Video_' + finalTime;
+        videopath = replace(pathName,'parameters','video/');
         if ~exist(videopath, 'dir')
                mkdir(videopath); 
         end
-        concat=[videopath,newVideoName,'.mp4'];
+        concat = videopath + newVideoName + '.mp4';
         concat=regexprep(concat, ':', '_');
         movefile('./Saved Data/capture.mp4',concat);
+        fullVideoName = concat;
     else
         %disp('Gets this far');
         L = length(Tlength);
         if(TRun == L)
-            clear newVideoName concat finalTime addTime2 timeR timeNum addTime
-            addTime2 = seconds(tStamp);
-            addTime = 5;
+            clear newVideoName concat finalTime timeR timeNum
             timeR = TrialStartTime;
             timeR  = regexprep(timeR, ':', '_');
             finalTime = timeR;
             disp('End of Trials, Ending Recording');
-            [status, cmdOut] = system(command, '-echo');
+            [~, ~] = system(command, '-echo');
             %disp(addTime2);
-            newVideoName=['Video_',finalTime];
-            videopath = strrep(pathName,'parameters','video/');
+            newVideoName = 'Video_' + finalTime;
+            videopath = replace(pathName,'parameters','video/');
             if ~exist(videopath, 'dir')
                    mkdir(videopath); 
             end
-            concat=[videopath,newVideoName,'.mp4'];
+            concat = videopath + newVideoName + '.mp4';
+            
             concat=regexprep(concat, ':', '_');
             movefile('./Saved Data/capture.mp4',concat);
+            fullVideoName = concat;
         end
     end
 end
