@@ -241,7 +241,7 @@ newPrio = MaxPriority(S.wPtr); %Find max prio of screen
 Priority(newPrio);             %Set max prio
 
 timeStart          = string(datetime('now')); %time as datestr
-timeStartPrecision = clock; %exact time (ms precision) as time vector
+timeStartPrecision = string(datetime('now'), 'Format', "HH:mm:ss:SSS"); %exact time (ms precision) as time vector
 
 disp(' ');
 disp('---------------------------------------------------------- ');
@@ -384,6 +384,9 @@ Priority(0); %set normal priority
 %----------------------------------------------------------------------
 % /CRITICAL SECTION
 
+%Get the exact timing of the end of recording
+timeEndPrecision = clock; %exact time (ms precision) as time vector
+
 % Special stuff for the starfield stimulus which is drawn on a opengl 3d
 % cylinder object
 for z = 1:numLayers
@@ -463,7 +466,7 @@ if userSettings.saveParameters
       ddstimulus = rmfield(ddstimulus, 'hGui');   % opens figure and causes Matlab to hang
       debugData.stimulus = ddstimulus; 
         %}
-      save(fileName, 'timeStart', 'timeStartPrecision', 'timeFinish', 'debugData', 'stimulus', 'message' );
+      save(fileName, 'timeStart', 'timeStartPrecision', 'timeEndPrecision', 'timeFinish', 'debugData', 'stimulus', 'message' );
       
       if S.recording~=0
         videoName = strcat(fileName, '.mp4');
@@ -473,11 +476,11 @@ if userSettings.saveParameters
         disp('Error saving file... Retrying... (1)');
         pause(2);
         try
-            save(fileName, 'timeStart', 'timeStartPrecision', 'timeFinish', 'debugData', 'stimulus', 'message' );
+            save(fileName, 'timeStart', 'timeStartPrecision', 'timeEndPrecision', 'timeFinish', 'debugData', 'stimulus', 'message' );
         catch
             disp('Error saving file... Retrying... (2)');
             pause(2);
-            save(fileName, 'timeStart', 'timeStartPrecision', 'timeFinish', 'debugData', 'stimulus', 'message' );
+            save(fileName, 'timeStart', 'timeStartPrecision', 'timeEndPrecision', 'timeFinish', 'debugData', 'stimulus', 'message' );
         end
     end
     
@@ -539,28 +542,26 @@ if TRun <= length(Tlength)
 end
 
 function startGuvcview(TRun, Pauset, Tlength) % Function to start recording from webcam (Current Trial Number, trial pause times in frames, list of trials)
-command = 'bash RecordCam.sh &'; % links to bash script that is used to start/stop recording
+path = which('recordCam.sh');
+command = "bash " + path + " &"; % links to bash script that is used to start/stop recording
 if TRun <= length(Tlength)
     nPause = Pauset(:,TRun); % Current trials Pause time in frames
     
     if ((nPause == 0) && (TRun == 1)) % Checks if there is a pause and if it's the first trial
-            %disp('Ran Start');
-            TrialStartTime = datestr(now, 0);
-            [status, cmdOut] = system(command, '-echo'); % Starts Recording
+            [~, ~] = system(command, '-echo'); % Starts Recording
     end
     if(TRun > 1) % Runs if there is more than one trial
         lPause = Pauset(:,TRun-1); % Gets previous trial time in frames
         if((nPause == 0) && (lPause ~= 0)) % Checks if current frame time is 0 and if the last pause time was not 0
-            %disp('Ran Start Middle');
-            [status, cmdOut] = system(command, '-echo'); % Starts a recording
-            TrialStartTime = datestr(now, 0);
+            [~, ~] = system(command, '-echo'); % Starts a recording
         end
     end
 end
 
 
 function fullVideoName = stopGuvcview(TRun, Pauset, Tlength,TrialStartTime,pathName)% Function to stop recording video from webcam (Current Trial Number, Current trial pause time in frames, list of trials,Time of Stimulus Start, Stimulus Name)
-command = 'bash RecordCam.sh &';
+path = which('recordCam.sh');
+command = "bash " + path + " &";
 %disp('end record');
 
 if TRun <= length(Tlength) 

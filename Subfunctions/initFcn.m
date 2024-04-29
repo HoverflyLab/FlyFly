@@ -66,7 +66,7 @@ switch Option
         screenData.gamma         = 1;       %gamma value of monitor
         % New variables
         screenData.recording     = 0;
-        screenData.useGuvcview   = 0;
+        screenData.useGuvcview   = 1;
         screenData.useRotated    = 0;
         screenData.videoAdaptor  = "Default";
         screenData.monitorHeight = 27.5;

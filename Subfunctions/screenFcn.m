@@ -33,8 +33,9 @@ switch Action
         screenNumber  = screenData.screenNumber;
 
         % Check if recording video data
-        recording = screenData.recording;
+        recording    = screenData.recording;
         videoAdaptor = screenData.videoAdaptor;
+        useGuv       = screenData.useGuvcview;
 
         %If required by user, rotate screen 90 degrees
         if screenData.useRotated == 1
@@ -43,32 +44,34 @@ switch Action
         end
 
         % If user wants defaults, check for connected cameras
-        if recording == 1 && videoAdaptor == "Default" 
-            adaptor = 0;
-            disp("Searching for default camera")
-            imaqreset
-            % Loop over all adaptors to find connected cameras
-            for adaptorIndex = 1:length(imaqhwinfo().InstalledAdaptors)
-                testAdaptor = imaqhwinfo().InstalledAdaptors{adaptorIndex};
-                if isempty(imaqhwinfo(testAdaptor).DeviceIDs) == 1, continue; end
-                % If camera found, break from loop
-                adaptor = testAdaptor;
-                break
-            end
-            % Verify connection to camera
-            if adaptor
-                screenData.videoAdaptor = adaptor;
-                disp("The camera adaptor has defaulted to: " + adaptor);
-            % If no cameras connected, don't record and warn user
-            else 
+        if ~useGuv
+            if recording == 1 && videoAdaptor == "Default"
+                adaptor = 0;
+                disp("Searching for default camera")
+                imaqreset
+                % Loop over all adaptors to find connected cameras
+                for adaptorIndex = 1:length(imaqhwinfo().InstalledAdaptors)
+                    testAdaptor = imaqhwinfo().InstalledAdaptors{adaptorIndex};
+                    if isempty(imaqhwinfo(testAdaptor).DeviceIDs) == 1, continue; end
+                    % If camera found, break from loop
+                    adaptor = testAdaptor;
+                    break
+                end
+                % Verify connection to camera
+                if adaptor
+                    screenData.videoAdaptor = adaptor;
+                    disp("The camera adaptor has defaulted to: " + adaptor);
+                % If no cameras connected, don't record and warn user
+                else 
+                    warning("No video device detected! Recording settings have been turned off. Re-enable them and re-initialise screen after device has been connected.")
+                    screenData.recording = 0;
+                end
+            elseif recording == 1 && isempty(imaqhwinfo(videoAdaptor).DeviceIDs) == 1
+                % If user has selected an adaptor, double check there's a
+                % camera connected
                 warning("No video device detected! Recording settings have been turned off. Re-enable them and re-initialise screen after device has been connected.")
                 screenData.recording = 0;
             end
-        elseif recording == 1 && isempty(imaqhwinfo(videoAdaptor).DeviceIDs) == 1
-            % If user has selected an adaptor, double check there's a
-            % camera connected
-            warning("No video device detected! Recording settings have been turned off. Re-enable them and re-initialise screen after device has been connected.")
-            screenData.recording = 0;
         end
 
 
