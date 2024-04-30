@@ -75,7 +75,7 @@ switch Option
         screenData.oldlevel       = Screen('Preference', 'Verbosity', 1); %critical errors only
         screenData.screenNumber   = 0; %best guess of which monitor to use
         
-        screenData.usePartial     = true;            %use full screen or partial
+        screenData.usePartial     = false;            %use full screen or partial
         screenData.partial        = [0 0 640 480];   %size of partial screen
         screenData.triggerRGBon   = 255;             %color of trigger active (white)
         screenData.triggerRGBoff  = 0;               %color of trigger deactive (black)
