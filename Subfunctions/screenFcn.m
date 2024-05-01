@@ -137,13 +137,16 @@ switch Action
         end
         
     case 'Kill'
-        
-        gammatable = repmat([0:255]',1,3)./255;
-        Screen('LoadNormalizedGammaTable', screenData.wPtr, gammatable);
-        
-        %Closing
-        Screen('CloseAll');                                      %Close Screen
-        Screen('Preference', 'Verbosity', screenData.oldlevel);  %Enable warnings
+        try
+            gammatable = repmat([0:255]',1,3)./255;
+            Screen('LoadNormalizedGammaTable', screenData.wPtr, gammatable);
+            
+            %Closing
+            Screen('CloseAll');                                      %Close Screen
+            Screen('Preference', 'Verbosity', screenData.oldlevel);  %Enable warnings
+        catch
+            disp("No screen to close, resetting appData")
+        end
         
         screenData.isInit = 0;
         screenData.inUse  = 0;

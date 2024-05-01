@@ -241,7 +241,7 @@ newPrio = MaxPriority(S.wPtr); %Find max prio of screen
 Priority(newPrio);             %Set max prio
 
 timeStart          = string(datetime('now')); %time as datestr
-timeStartPrecision = string(datetime('now'), 'Format', "HH:mm:ss:SSS"); %exact time (ms precision) as time vector
+timeStartPrecision = string(datetime('now', 'Format', "HH:mm:ss:SSS")); %exact time (ms precision) as time vector
 
 disp(' ');
 disp('---------------------------------------------------------- ');
@@ -563,6 +563,7 @@ function fullVideoName = stopGuvcview(TRun, Pauset, Tlength,TrialStartTime,pathN
 path = which('recordCam.sh');
 command = "bash " + path + " &";
 %disp('end record');
+fullVideoName = 0;
 
 if TRun <= length(Tlength) 
     if(TRun ~= length(Tlength))
