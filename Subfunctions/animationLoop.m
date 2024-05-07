@@ -372,7 +372,10 @@ for k=1:length(frameMatrix)
 end
 
 totalStimTime = toc(critSecStart);
-timeFinish    = datestr(now, 0);
+timeFinish    = string(datetime('now'));
+%Get the exact timing of the end of recording
+timeEndPrecision = string(datetime('now', 'Format', "HH:mm:ss:SSS")); %exact time (ms precision) as time vector
+
 
 %Turn trigger off (end experiment)
 Screen('FillRect', S.wPtr, S.bgColor);
@@ -384,8 +387,6 @@ Priority(0); %set normal priority
 %----------------------------------------------------------------------
 % /CRITICAL SECTION
 
-%Get the exact timing of the end of recording
-timeEndPrecision = clock; %exact time (ms precision) as time vector
 
 % Special stuff for the starfield stimulus which is drawn on a opengl 3d
 % cylinder object
