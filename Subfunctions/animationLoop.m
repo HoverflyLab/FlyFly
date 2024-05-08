@@ -589,7 +589,7 @@ if TRun <= length(Tlength)
         end
         concat = videopath + newVideoName + '.mp4';
         concat=regexprep(concat, ':', '_');
-        movefile('./Saved Data/capture.mp4',concat);
+        movefile('./capture.mp4',concat);
         fullVideoName = concat;
     else
         %disp('Gets this far');
@@ -610,7 +610,7 @@ if TRun <= length(Tlength)
             concat = videopath + newVideoName + '.mp4';
             
             concat=regexprep(concat, ':', '_');
-            movefile('./Saved Data/capture.mp4',concat);
+            movefile('./capture.mp4',concat);
             fullVideoName = concat;
         end
     end
