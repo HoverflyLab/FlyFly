@@ -84,6 +84,11 @@ switch Action
 
             %use screenPartial for a non full screen
             if screenData.usePartial
+                if screenData.useRotated
+                    temp = screenPartial(3);
+                    screenPartial(3) = screenPartial(4);
+                    screenPartial(4) = temp;
+                end
                 [wPtr,rect] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, screenPartial, ...
                     [], [], [], [], kPsychNeedFastOffscreenWindows);
             else
