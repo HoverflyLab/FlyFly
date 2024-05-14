@@ -11,7 +11,7 @@ function [x1, y1] = setFlyPos(ScreenSettings)
 %--------------------------------------------------------------------------
 
 wPtr = ScreenSettings.wPtr;
-rect = ScreenSettings.rect;
+partial = ScreenSettings.partial;
 ifi  = ScreenSettings.ifi;
 
 screenRes = get(0, 'ScreenSize');
@@ -60,19 +60,19 @@ while go
     
     if numClicks == 0 %case 1
         
-        Screen('DrawLine', wPtr, [0 0 0], 0, mY, rect(3), mY); %horizontal
-        Screen('DrawLine', wPtr, [0 0 0], mX, 0, mX, rect(4)); %vertical
+        Screen('DrawLine', wPtr, [0 0 0], 0, mY, partial(3), mY); %horizontal
+        Screen('DrawLine', wPtr, [0 0 0], mX, 0, mX, partial(4)); %vertical
         
     elseif numClicks == 1 %case 2
-        Screen('DrawLine', wPtr, [200 200 200], 0, flyPos(2), rect(3), flyPos(2));
-        Screen('DrawLine', wPtr, [200 200 200], flyPos(1), 0, flyPos(1), rect(4));
+        Screen('DrawLine', wPtr, [200 200 200], 0, flyPos(2), partial(3), flyPos(2));
+        Screen('DrawLine', wPtr, [200 200 200], flyPos(1), 0, flyPos(1), partial(4));
         Screen('FillOval', wPtr, [200 200 200], [flyPos(1)-3  flyPos(2)-3  flyPos(1)+3  flyPos(2)+3]); 
         
-        Screen('DrawLine', wPtr, [0 0 0], 0, mY, rect(3), mY); %horizontal
-        Screen('DrawLine', wPtr, [0 0 0], mX, 0, mX, rect(4)); %vertical
+        Screen('DrawLine', wPtr, [0 0 0], 0, mY, partial(3), mY); %horizontal
+        Screen('DrawLine', wPtr, [0 0 0], mX, 0, mX, partial(4)); %vertical
     elseif numClicks == 2 %case 3
-        Screen('DrawLine', wPtr, [200 200 200], 0, flyPos(2), rect(3), flyPos(2));
-        Screen('DrawLine', wPtr, [200 200 200], flyPos(1), 0, flyPos(1), rect(4));
+        Screen('DrawLine', wPtr, [200 200 200], 0, flyPos(2), partial(3), flyPos(2));
+        Screen('DrawLine', wPtr, [200 200 200], flyPos(1), 0, flyPos(1), partial(4));
         Screen('FillOval', wPtr, [200 200 200], [flyPos(1)-3  flyPos(2)-3  flyPos(1)+3  flyPos(2)+3]); 
     end
     

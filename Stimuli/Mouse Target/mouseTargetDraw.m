@@ -1,6 +1,6 @@
 function P = mouseTargetDraw(wPtr, n, k, ifi, P)
 %
-%Draw a rect in wPtr to current mouse position
+%Draw a rectangle in wPtr to current mouse position
 %
 
 %--------------------------------------------------------------------------

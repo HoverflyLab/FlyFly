@@ -89,23 +89,14 @@ switch Action
                     screenPartial(3) = screenPartial(4);
                     screenPartial(4) = temp;
                 end
-                [wPtr,rect] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, screenPartial, ...
+                [wPtr,~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, screenPartial, ...
                     [], [], [], [], kPsychNeedFastOffscreenWindows);
             else
-                [wPtr,rect] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, ...
+                [wPtr,~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, ...
                     [], [], [], [], [], kPsychNeedFastOffscreenWindows);%fullscreen
             end
 
             screenData.bgColor = chstimuli(index).targetBgColor;
-%             if screenData.usePartial
-%                 [wPtr,rect] = Screen('OpenWindow', screenNumber, screenData.bgColor, screenPartial, ...
-%                     [], [], [], [], kPsychNeedFastOffscreenWindows);
-% %                 [wPtr,rect] = PsychImaging('OpenWindow', screenNumber, rgbWhite, screenPartial);
-%             else
-%                 [wPtr,rect] = Screen('OpenWindow', screenNumber, screenData.bgColor, ...
-%                     [], [], [], [], [], kPsychNeedFastOffscreenWindows);%fullscreen
-% %                 [wPtr,rect] = PsychImaging('OpenWindow', screenNumber, rgbWhite); %fullscreen
-%             end
             gammatable = rgbCal(repmat([0:255]',1,3), screenData.gamma)/255;
 
             Screen('LoadNormalizedGammaTable', screenNumber, gammatable);
@@ -124,7 +115,6 @@ switch Action
             screenData.inUse          = 0;
             screenData.screenOldlevel = oldLevel;
             screenData.wPtr           = wPtr;      %pointer to screen
-            screenData.rect           = rect;      %size of screen
             
             Screen('FillRect', wPtr, screenData.triggerRGBoff, screenData.triggerPos); %trigger off
             Screen('Flip', wPtr);
@@ -163,33 +153,33 @@ switch Action
         
         if screenData.isInit
             
-            rect = screenData.rect;
+            partial = screenData.partial;
             k = 0;
-            while k < max(rect(4), rect(3)) %bright lines
-                Screen('DrawLine', screenData.wPtr, [235 235 235], 0, k, rect(3), k);
-                Screen('DrawLine', screenData.wPtr, [235 235 235], k, 0, k, rect(4));
+            while k < max(partial(4), partial(3)) %bright lines
+                Screen('DrawLine', screenData.wPtr, [235 235 235], 0, k, partial(3), k);
+                Screen('DrawLine', screenData.wPtr, [235 235 235], k, 0, k, partial(4));
                 k = k + 10;
             end
             
             k = 0;
-            while k < max(rect(4), rect(3)) %bright lines
-                Screen('DrawLine', screenData.wPtr, [200 200 200], 0, k, rect(3), k);
-                Screen('DrawLine', screenData.wPtr, [200 200 200], k, 0, k, rect(4));
+            while k < max(partial(4), partial(3)) %bright lines
+                Screen('DrawLine', screenData.wPtr, [200 200 200], 0, k, partial(3), k);
+                Screen('DrawLine', screenData.wPtr, [200 200 200], k, 0, k, partial(4));
                 k = k + 50;
             end
             k = 0;
-            while k < max(rect(4), rect(3)) %dark lines
-                Screen('DrawLine', screenData.wPtr, [0 0 0], 0, k, rect(3), k);
-                Screen('DrawLine', screenData.wPtr, [0 0 0], k, 0, k, rect(4));
+            while k < max(partial(4), partial(3)) %dark lines
+                Screen('DrawLine', screenData.wPtr, [0 0 0], 0, k, partial(3), k);
+                Screen('DrawLine', screenData.wPtr, [0 0 0], k, 0, k, partial(4));
                 k = k + 100;
             end
             
             y = 0;
             Screen('TextSize', screenData.wPtr, 7);
-            while y < rect(4) %rows
+            while y < partial(4) %rows
                 
                 x = 0;
-                while x < rect(3) %cols
+                while x < partial(3) %cols
                     Screen('DrawText', screenData.wPtr, ['(' num2str(x) ',' num2str(y) ')'], x, y);
                     x = x + 100;
                 end
@@ -219,10 +209,10 @@ switch Action
         flyPos(2)     = screenData.flyPos(2);
         
         wPtr = screenData.wPtr;
-        rect = screenData.rect;
+        partial = screenData.partial;
         
-        Screen('DrawLine', wPtr, [200 200 200], 0, flyPos(2), rect(3), flyPos(2));
-        Screen('DrawLine', wPtr, [200 200 200], flyPos(1), 0, flyPos(1), rect(4));
+        Screen('DrawLine', wPtr, [200 200 200], 0, flyPos(2), partial(3), flyPos(2));
+        Screen('DrawLine', wPtr, [200 200 200], flyPos(1), 0, flyPos(1), partial(4));
         Screen('FillOval', wPtr, [200 200 200], [flyPos(1)-3  flyPos(2)-3  flyPos(1)+3  flyPos(2)+3]);
                 
         %Screen('FillRect', navData.screenWptr, [255 255 255]);

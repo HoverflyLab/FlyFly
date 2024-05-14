@@ -53,14 +53,13 @@ switch Option
                 
         navData.saveDataPathName = strcat(cd, '/Saved Data'); %default pathname to save data into
         
-        init = navData; %return new values
+        init = navData; % Return new values
         
     case 'InitScreenData'
         %screen data
         screenData.isInit        = 0;         %is the screen initialized?
         screenData.inUse         = 0;         %is the screen in use atm?        
         screenData.wPtr          = 0;         %pointer to screen
-        screenData.rect          = 0;         %size of screen
         screenData.hz            = 0;         %monitor update frequency (nominal)
         screenData.ifi           = 0;         %monitor frame length (measured)
         screenData.gamma         = 1;       %gamma value of monitor

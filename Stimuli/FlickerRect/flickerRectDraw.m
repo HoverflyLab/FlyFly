@@ -1,6 +1,6 @@
 function Parameters = flickerRectDraw(wPtr, n, k, ifi, Parameters)
 %Parameters: RGB1, RGB2, POSITION
-%Draw a flickering rect in wPtr to position
+%Draw a flickering rectangle in wPtr to position
 %
 
 %--------------------------------------------------------------------------

@@ -42,7 +42,7 @@ for k = 1:numRuns
     
     screen_dist = ScreenData.flyDistance/100;   % in m
     
-    pxPerCm = ScreenData.rect(4) ./ ScreenData.monitorHeight;
+    pxPerCm = ScreenData.partial(4) ./ ScreenData.monitorHeight;
     pix_per_m = 100 * pxPerCm;
     
     factor = screen_dist * 2 * pix_per_m;

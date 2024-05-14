@@ -95,14 +95,14 @@ yy = P.ypos-P.height/2;
 
 position   = [xx' yy' xx' yy'];
 
-angleBound = atan( (ScreenData.rect(4) - P.ypos) /x); %angle of screen diagonal
+angleBound = atan( (ScreenData.partial(4) - P.ypos) /x); %angle of screen diagonal
 
 if P.angleRad > angleBound
-    L = ScreenData.rect(4)./sin(P.angleRad);
+    L = ScreenData.paartial(4)./sin(P.angleRad);
 elseif P.angleRad < angleBound
-    L = ScreenData.rect(3)./cos(P.angleRad) + y*tan(P.angleRad);
+    L = ScreenData.partial(3)./cos(P.angleRad) + y*tan(P.angleRad);
 else
-    L = ScreenData.rect(3)./cos(P.angleRad);
+    L = ScreenData.partial(3)./cos(P.angleRad);
 end
 
 %each trial in a column

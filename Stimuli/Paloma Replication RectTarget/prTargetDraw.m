@@ -1,6 +1,6 @@
 function Parameters = prTargetDraw(wPtr, n, k, ifi, Parameters)
 %Parameters: RGB, POSITION, DELTAPOSITION
-%Draw a rect in wPtr to position, modified by n*deltaPosition
+%Draw a rectangle in wPtr to position, modified by n*deltaPosition
 %
 
 %--------------------------------------------------------------------------
