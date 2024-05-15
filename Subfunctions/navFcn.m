@@ -5,7 +5,6 @@ function navFcn(handles, Action, Input)
 %            (optional)
 
 %Possible Actions:
-%
 % Close
 % AddHandle
 % Update
