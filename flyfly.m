@@ -7,7 +7,7 @@ function flyfly()
 %    |_| |_|\__, |_| |_|\__, |
 %            __/ |       __/ |
 %           |___/       |___/ 
-%|-------------------------------------------------------
+%|------------------------------------------------------|
 %|   FlyFly 4.1 - Visual Stimulus user interface        |
 %|                                                      |
 %|    -Requires MatLab 2023 with Psychophysics toolbox  |
@@ -15,7 +15,7 @@ function flyfly()
 %|                                                      |
 %|                                                      |
 %| info@flyfly.se             (c) Jonas Henriksson 2010 |
-%-------------------------------------------------------|
+%|------------------------------------------------------|
 %
 %               Why did the fly fly?
 %            Because the spider spied 'er!
