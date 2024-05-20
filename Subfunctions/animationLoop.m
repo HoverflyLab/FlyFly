@@ -241,7 +241,7 @@ newPrio = MaxPriority(S.wPtr); %Find max prio of screen
 Priority(newPrio);             %Set max prio
 
 timeStart          = string(datetime('now')); %time as datestr
-timeStartPrecision = string(datetime('now', 'Format', "HH:mm:ss:SSS")); %exact time (ms precision) as time vector
+timeStartPrecision = string(datetime('now', 'Format', "dd-MMM-yyyy HH:mm:ss:SSS")); %exact time (ms precision) as time vector
 
 disp(' ');
 disp('---------------------------------------------------------- ');
@@ -263,7 +263,11 @@ if userSettings.saveParameters
     pathName   = userSettings.saveDataPathName;
     timeStart  = regexprep(timeStart, ':', '_'); %(replaces ':' with '_' in string)
     
-    fileName   = strcat(pathName, '/', stimulus.name, '-', timeStart);
+    fileName   = strcat(pathName, '/parameters/');
+    if ~exist(fileName, 'dir')
+           mkdir(fileName); 
+    end
+    concat = strcat(fileName, stimulus.name, '_', timeStart);
     message    = 'NOTE: THIS RUN WAS ABORTED';
     
     % only save the parameters of the executed trial subset
@@ -272,9 +276,11 @@ if userSettings.saveParameters
         stimulus.layers(l).settings = stimulus.layers(l).settings(trialSubset);
     end
     
-    
-    save(fileName, 'timeStart', 'timeStartPrecision', 'debugData', 'stimulus', 'message');
-    disp(['Parameters saved to ' fileName]);
+    % Capitalise stimulus to keep consistent with lab scripts
+    Stimulus = stimulus;
+    save(concat, 'timeStart', 'timeStartPrecision', 'debugData', 'Stimulus', 'message');
+    clear Stimulus
+    disp(['Parameters saved to ' concat]);
     disp(' ');
 end
 %--------------------------------------------------------------------------
@@ -366,24 +372,24 @@ for k=1:length(frameMatrix)
             case 0
                 stopCam(k, T.pause(z,:), 1:length(frameMatrix), video);
             case 1
-                fullVideoName = stopGuvcview(k, T.pause(z,:), 1:length(frameMatrix), timeStart, userSettings.saveDataPathName);
+                stopGuvcview(k, T.pause(z,:), 1:length(frameMatrix));
         end
     end
 end
 
 totalStimTime = toc(critSecStart);
 timeFinish    = string(datetime('now'));
-%Get the exact timing of the end of recording
-timeEndPrecision = string(datetime('now', 'Format', "HH:mm:ss:SSS")); %exact time (ms precision) as time vector
+% Get the exact timing of the end of recording
+timeEndPrecision = string(datetime('now', 'Format', "dd-MMM-yyyy HH:mm:ss:SSS")); %exact time (ms precision) as time vector
 
 
-%Turn trigger off (end experiment)
+% Turn trigger off (end experiment)
 Screen('FillRect', S.wPtr, S.bgColor);
 Screen('FillRect', S.wPtr, S.triggerRGBoff, S.triggerPos); %trigger off
 Screen('DrawingFinished',S.wPtr);
 Screen('Flip', S.wPtr, vbl+(0.7)*S.ifi);
 
-Priority(0); %set normal priority
+Priority(0); % Set normal priority
 %----------------------------------------------------------------------
 % /CRITICAL SECTION
 
@@ -428,7 +434,6 @@ fprintf('SUMMARY:\n');
 fprintf('Total time: %.6f s\n', totalStimTime);
 fprintf('Skipped frames: %d out of %d (%.3f%%) -- TOTAL frame time\n', sum(skippedFrames), totalFrames, 100*sum(skippedFrames)/totalFrames);
 
-%fprintf('Skipped during stimuli: %d\n', sum(skippedStimFrames));
 ssf = sum(skippedStimFrames);
 ssfp = 100*sum(skippedStimFrames)/totalStimFrames;
 fprintf('Skipped frames during stimuli: %d out of %d (%.3f%%) -- STIMULUS frame time\n', ssf, totalStimFrames, ssfp);
@@ -456,36 +461,45 @@ if userSettings.saveParameters
     
     pathName   = userSettings.saveDataPathName;    
     timeFinish = regexprep(timeFinish, ':', '_'); %replaces ':' with '_' in string
-    fileName   = strcat(pathName, '/', stimulus.name, '-', timeStart);
+    fileName   = strcat(pathName, '/parameters/');
+    if ~exist(fileName, 'dir')
+           mkdir(fileName); 
+    end
+    concat = strcat(fileName, stimulus.name, '_', timeStart);
+    if S.recording == 1 && S.useGuvcview == 1
+        videopath = strcat(pathName, '/video/');
+        if ~exist(videopath, 'dir')
+               mkdir(videopath); 
+        end
+        concat = strcat(videopath, stimulus.name, '_', timeStart, '.mp4');
+        concat=regexprep(concat, ':', '_');
+        movefile('capture.mp4',concat);
+    end
 
 
     message    = 'NOTE: STIMULUS PLAYED TO THE END';
     
     try
-        %{
-      ddstimulus = struct(debugData.stimulus); 
-      ddstimulus = rmfield(ddstimulus, 'hGui');   % opens figure and causes Matlab to hang
-      debugData.stimulus = ddstimulus; 
-        %}
-      save(fileName, 'timeStart', 'timeStartPrecision', 'timeEndPrecision', 'timeFinish', 'debugData', 'stimulus', 'message' );
-      
-      if S.recording~=0
-        videoName = strcat(fileName, '.mp4');
-        movefile(fullVideoName, videoName);
-      end
+        % Change capitalisation to keep consistent with lab scripts
+        Stimulus = stimulus;
+        save(concat, 'timeStart', 'timeStartPrecision', 'timeEndPrecision', 'timeFinish', 'debugData', 'Stimulus', 'message' );
     catch
         disp('Error saving file... Retrying... (1)');
         pause(2);
         try
-            save(fileName, 'timeStart', 'timeStartPrecision', 'timeEndPrecision', 'timeFinish', 'debugData', 'stimulus', 'message' );
+            save(concat, 'timeStart', 'timeStartPrecision', 'timeEndPrecision', 'timeFinish', 'debugData', 'Stimulus', 'message' );
         catch
             disp('Error saving file... Retrying... (2)');
             pause(2);
-            save(fileName, 'timeStart', 'timeStartPrecision', 'timeEndPrecision', 'timeFinish', 'debugData', 'stimulus', 'message' );
+            save(concat, 'timeStart', 'timeStartPrecision', 'timeEndPrecision', 'timeFinish', 'debugData', 'Stimulus', 'message' );
         end
     end
+
+    clear Stimulus
+
+
     
-    disp(['Skipped frames and total time saved to ' fileName]);
+    disp(['Skipped frames and total time saved to ' concat]);
     disp('---------------------------------------------------------- ');
 else
     disp('Parameter saving disabled');
@@ -560,7 +574,7 @@ if TRun <= length(Tlength)
 end
 
 
-function fullVideoName = stopGuvcview(TRun, Pauset, Tlength,TrialStartTime,pathName)% Function to stop recording video from webcam (Current Trial Number, Current trial pause time in frames, list of trials,Time of Stimulus Start, Stimulus Name)
+function fullVideoName = stopGuvcview(TRun, Pauset, Tlength)% Function to stop recording video from webcam (Current Trial Number, Current trial pause time in frames, list of trials,Time of Stimulus Start, Stimulus Name)
 path = which('recordCam.sh');
 command = "bash " + path + " &";
 %disp('end record');
@@ -575,43 +589,14 @@ if TRun <= length(Tlength)
     %disp(nPause);
     if (nPause ~= 0)
         clear newVideoName concat finalTime timeR timeNum
-        timeR = TrialStartTime;
-        timeR  = regexprep(timeR, ':', '_');
-        finalTime = timeR;
-        %finalTime = regexprep(timeR, ':', '_');
-        disp('pause is more than 0, Ending Recording');
         [~, ~] = system(command, '-echo');
-        disp(finalTime);
-        newVideoName='Video_' + finalTime;
-        videopath = replace(pathName,'parameters','video/');
-        if ~exist(videopath, 'dir')
-               mkdir(videopath); 
-        end
-        concat = videopath + newVideoName + '.mp4';
-        concat=regexprep(concat, ':', '_');
-        movefile('./capture.mp4',concat);
-        fullVideoName = concat;
     else
         %disp('Gets this far');
         L = length(Tlength);
         if(TRun == L)
             clear newVideoName concat finalTime timeR timeNum
-            timeR = TrialStartTime;
-            timeR  = regexprep(timeR, ':', '_');
-            finalTime = timeR;
             disp('End of Trials, Ending Recording');
             [~, ~] = system(command, '-echo');
-            %disp(addTime2);
-            newVideoName = 'Video_' + finalTime;
-            videopath = replace(pathName,'parameters','video/');
-            if ~exist(videopath, 'dir')
-                   mkdir(videopath); 
-            end
-            concat = videopath + newVideoName + '.mp4';
-            
-            concat=regexprep(concat, ':', '_');
-            movefile('./capture.mp4',concat);
-            fullVideoName = concat;
         end
     end
 end
