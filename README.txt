@@ -12,7 +12,8 @@
 
 
 FlyFly is a free, high level interface used to create visual stimuli developed for use in motion vision research. You will need 64-bit MatLab (http://www.mathworks.com) with Psychophysics toolbox (http://psychtoolbox.org) to run it.
-Both the install guide and the operations manual can be found within the documentation folder.
+
+To use this program, open this folder up in matlab and type 'flyfly' into the command window!
 
 
 For more information please visit http://www.flyfly.se
@@ -34,10 +35,12 @@ Version History
 
 * Added camera functionality to FlyFly; users can now select an option in the settings where if they have a camera connected, a video will start recording whilst the stimuli is being shown.
 * Camera settings for webcams can be imported via csv files, documentation on how to create these settings have been included alongside an example settings file
+* Additional functionality to integrate video work with guvcview if needed
 * A 'preview camera' button has been added to the settings and stimuli windows for users to check their camera is set up correctly
 * Added rotated screen functionality; users with rotated screen setups can now click an option in the settings that will rotate the stimulus by 90 degrees for them.
 * Removed Dlp monitor support
-* Minor fixes and improvements to the gui, plus removal of a memory leak
+* Consolidated fly gaze and fly position together
+* Various stability improvements, QOL features, and bug fixes from the matlab compatability patch
 
 ------------------------------------------------------------------------------------------
 4.0
