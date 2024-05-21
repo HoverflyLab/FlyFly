@@ -33,18 +33,18 @@ zNear = 0.1;
 % Field of view (y)
 fovy = 2*atand(0.5*ScreenData.monitorHeight/ScreenData.flyDistance);
 % Aspect ratio
-ar = ScreenData.rect(3) / ScreenData.rect(4);
+ar = ScreenData.partial(3) / ScreenData.partial(4);
 
 P.monHeight    = ScreenData.monitorHeight;
 P.monWidth = P.monHeight * ar;
 P.viewDistance = zFar;
 
-pxPerCm = ScreenData.rect(4) ./ P.monHeight;
-cmPerpx = P.monHeight./ScreenData.rect(4);
+pxPerCm = ScreenData.partial(4) ./ P.monHeight;
+cmPerpx = P.monHeight./ScreenData.partial(4);
 
 Screen('BeginOpenGL', ScreenData.wPtr);
 
-glViewport(0, 0, ScreenData.rect(3), ScreenData.rect(4));
+glViewport(0, 0, ScreenData.partial(3), ScreenData.partial(4));
 
 glDisable(GL.LIGHTING);
 
@@ -120,18 +120,7 @@ for k=1:numRuns  % for each trial
             wt = ht*ar;
             show_target = (target_pos(3) < -zNear) && (target_pos(3) > -zFar) && ...
                 (abs(target_pos(2)) < ht) && (abs(target_pos(1)) < wt);
-
-            
-%             % z-clipping planes
-%             zFar = 200;
-%             zNear = 1;
-%             % Field of view (y)
-%             fovy = 2*atand(0.5*ScreenData.monitorHeight/ScreenData.flyDistance);
-%             % Aspect ratio
-%             ar = ScreenData.rect(3) / ScreenData.rect(4);
-
-            
-            
+                  
             % Projection
             if show_target
             

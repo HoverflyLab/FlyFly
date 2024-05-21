@@ -53,33 +53,35 @@ switch Option
                 
         navData.saveDataPathName = strcat(cd, '/Saved Data'); %default pathname to save data into
         
-        init = navData; %return new values
+        init = navData; % Return new values
         
     case 'InitScreenData'
         %screen data
-        screenData.isInit       = 0;         %is the screen initialized?
-        screenData.inUse        = 0;         %is the screen in use atm?        
-        screenData.wPtr         = 0;         %pointer to screen
-        screenData.rect         = 0;         %size of screen
-        screenData.hz           = 0;         %monitor update frequency (nominal)
-        screenData.ifi          = 0;         %monitor frame length (measured)
-        screenData.gamma        = 1;       %gamma value of monitor
+        screenData.isInit        = 0;         %is the screen initialized?
+        screenData.inUse         = 0;         %is the screen in use atm?        
+        screenData.wPtr          = 0;         %pointer to screen
+        screenData.hz            = 0;         %monitor update frequency (nominal)
+        screenData.ifi           = 0;         %monitor frame length (measured)
+        screenData.gamma         = 1;       %gamma value of monitor
         % New variables
-        screenData.dlp          = 0;
+        screenData.recording     = 0;
+        screenData.useGuvcview   = 1;
+        screenData.useRotated    = 0;
+        screenData.videoAdaptor  = "Default";
         screenData.monitorHeight = 27.5;
-        screenData.flyDistance  = 14;
+        screenData.flyDistance   = 14;
         
         screenData.oldlevel       = Screen('Preference', 'Verbosity', 1); %critical errors only
         screenData.screenNumber   = 0; %best guess of which monitor to use
         
-        screenData.usePartial     = true;            %use full screen or partial
+        screenData.usePartial     = false;            %use full screen or partial
         screenData.partial        = [0 0 640 480];   %size of partial screen
         screenData.triggerRGBon   = 255;             %color of trigger active (white)
         screenData.triggerRGBoff  = 0;               %color of trigger deactive (black)
         screenData.bgColor        = -1;   
         screenData.beforeBgColor = -1;
         screenData.triggerPos     = [0 430 50 480];    %size of trigger, width, height
-        screenData.flyPos         = [320 240 320 240]; %fly position in from of monitor
+        screenData.flyPos         = [320 240]; %fly position in from of monitor
         
         init = screenData; %return new values
         

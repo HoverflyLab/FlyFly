@@ -36,9 +36,8 @@ for k = 1:numRuns
     fprintf('x has length %d\n', numel(x));
     sz = max(min(63, sizes./z),1);
     clrs = repmat(255*z/DEPTH, 3, 1);
-   rect = [0 0 WIDTH HEIGHT];
-    %rect = [0 0 650 500];
-    ptr = Screen('OpenOffScreenWindow', -1, [], rect);
+    partial = [0 0 WIDTH HEIGHT];
+    ptr = Screen('OpenOffScreenWindow', -1, [], partial);
     Screen('DrawDots', ptr, xy, sz, clrs,[],1);
     %Screen('DrawDots', ptr, starfieldOutput(k).xymatrix{1}, starfieldOutput(k).dotsize{1}, starfieldOutput(k).color{1}, starfieldOutput(k).center, 1);
     img = Screen('GetImage', ptr);
@@ -50,8 +49,8 @@ end
 
 
 
-halfwidth = (ScreenData.rect(3)-ScreenData.rect(1))/2;
-halfheight = (ScreenData.rect(4)-ScreenData.rect(2))/2;
+halfwidth = (ScreenData.partial(3)-ScreenData.partial(1))/2;
+halfheight = (ScreenData.partial(4)-ScreenData.partial(2))/2;
 ImgParameters = zeros(10, numRuns);
 ImgParameters(end-3:end, :) = Parameters(end-3:end, :); % time etc.
 ImgParameters(1, :) = ones(1, numRuns) * size(img,1);  

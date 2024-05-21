@@ -62,13 +62,13 @@ zNear = 6;
 % Field of view (y)
 fovy = 2*atand(0.5*ScreenData.monitorHeight/ScreenData.flyDistance);
 % Aspect ratio
-ar = ScreenData.rect(3) / ScreenData.rect(4);
+ar = ScreenData.partial(3) / ScreenData.partial(4);
 
 P.monHeight    = ScreenData.monitorHeight;
 P.monWidth = P.monHeight * ar;
 P.viewDistance = zFar;
 ifi = ScreenData.ifi;
-pxPerCm = ScreenData.rect(4) ./ P.monHeight;
+pxPerCm = ScreenData.partial(4) ./ P.monHeight;
 
 % INITIAL SPACE - just needs to be reasonably large, as it will essentially
 % be infinite - see below
@@ -92,7 +92,7 @@ end
 % rendering (only the matrices).
 Screen('BeginOpenGL', ScreenData.wPtr);
 
-glViewport(0, 0, ScreenData.rect(3), ScreenData.rect(4));
+glViewport(0, 0, ScreenData.partial(3), ScreenData.partial(4));
 
 glDisable(GL.LIGHTING);
 

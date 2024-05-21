@@ -8,11 +8,12 @@
 |    |_| |_|\__, |_| |_|\__, |       |
 |            __/ |       __/ |       |
 |           |___/       |___/        | 
-|-------------------------------------
+|------------------------------------|
 
 
 FlyFly is a free, high level interface used to create visual stimuli developed for use in motion vision research. You will need 64-bit MatLab (http://www.mathworks.com) with Psychophysics toolbox (http://psychtoolbox.org) to run it.
-Both the install guide and the operations manual can be found within the documentation folder.
+
+To use this program, open this folder up in matlab and type 'flyfly' into the command window!
 
 
 For more information please visit http://www.flyfly.se
@@ -20,27 +21,38 @@ For more information please visit http://www.flyfly.se
 
 (C) Jonas Henriksson 2010    jonas.henriksson@flyfly.se
 
-              |Why did the fly fly?|
-          |Because the spider spied 'er!|
+               Why did the fly fly?
+           Because the spider spied 'er!
 
 ------------------------------------------------------------------------------------------
 Version History 
 ------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
-4.0 Updates
+4.X Updates
 ------------------------------------------------------------------------------------------
+4.1
 
+* Added camera functionality to FlyFly; users can now select an option in the settings where if they have a camera connected, a video will start recording whilst the stimuli is being shown.
+* Camera settings for webcams can be imported via csv files, documentation on how to create these settings have been included alongside an example settings file
+* Additional functionality to integrate video work with guvcview if needed
+* A 'preview camera' button has been added to the settings and stimuli windows for users to check their camera is set up correctly
+* Added rotated screen functionality; users with rotated screen setups can now click an option in the settings that will rotate the stimulus by 90 degrees for them.
+* Removed Dlp monitor support
+* Consolidated fly gaze and fly position together
+* Various stability improvements, QOL features, and bug fixes from the matlab compatability patch
+
+------------------------------------------------------------------------------------------
 4.0
 
 * New numbered version as due to sweeping compatability changes that allows Flyfly to run on modern software
-* Made Flyfly compatible with MATLAB 2016a up to release 2023b
+* Made Flyfly compatible with MATLAB 2018a up to release 2023b
 * Updated documentation for install guide to keep in line with modern versions of PsychToolbox as the old installation method has been deprecated
 * Migrated the Flyfly GUI from GUIDE to App Designer, to ensure support for the GUI is maintained in future MATLAB releases
-* NOTE: As the GUI is now running on App Designer, the user must use MATLAB 2016a or later for Flyfly to work
+* NOTE: As the GUI is now running on App Designer, the user must use MATLAB 2018a or later for Flyfly to work
 
 ------------------------------------------------------------------------------------------
-3.0 Updates
+3.x Updates
 ------------------------------------------------------------------------------------------
 3.1
 
@@ -49,7 +61,7 @@ Version History
 * new stimulus (ImageTarget) allows 2D movement of a user-specified image along a trajectory
 
 ------------------------------------------------------------------------------------------
-2.0 Updates
+2.x Updates
 ------------------------------------------------------------------------------------------
 2.60
 *Merged with flyfly version with Roel's shuffle button. This button uses the value from 
@@ -157,7 +169,7 @@ Rolling image
 * Texture check: Same image in different trials just use one texture
 
 ------------------------------------------------------------------------------------------
-1.0 Updates
+1.x Updates
 ------------------------------------------------------------------------------------------
 1.7.2
 

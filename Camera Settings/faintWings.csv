@@ -1,0 +1,2 @@
+Brightness,Contrast,FrameRate,HorizontalFlip,VerticalFlip,PowerLineFrequency,Saturation,Sharpness,WhiteBalanceMode,videoFormat,ReturnedColorspace
+0,20,100,off,off,Disabled,0,0,manual,YV12_320x240,grayscale

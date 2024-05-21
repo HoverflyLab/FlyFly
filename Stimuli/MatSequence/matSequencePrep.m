@@ -61,7 +61,7 @@ for k = 1:numRuns
     
     stretch = StimSettings(k).box1{2}; %true/false
     if stretch
-        dstRect(:,k) = [0; 0; ScreenData.rect(3); ScreenData.rect(4)];
+        dstRect(:,k) = [0; 0; ScreenData.partial(3); ScreenData.partial(4)];
     else
         dstRect(:,k) = [P.Xpos(k)-C/2 P.Ypos(k)-R/2 P.Xpos(k)+C/2 P.Ypos(k)+R/2];
     end

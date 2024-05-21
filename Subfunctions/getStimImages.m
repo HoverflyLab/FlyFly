@@ -23,11 +23,8 @@ fcnDraw = cell(numLayers,1);
 ScreenData.ifi = 1/fps;
 ScreenData.hz  = fps;
 
-if ScreenData.dlp
-    NumSubframes = 3;
-else
-    NumSubframes = 1;
-end
+NumSubframes = 1;
+
     
 fprintf('Calculating... ');
 for z = 1:numLayers
@@ -85,12 +82,8 @@ for z = 1:numLayers
         end
     end
     
-    % DLP or normal mode
-    if ScreenData.dlp
-        critInput{z} = fcnPrep(data, ScreenData, settings, 3);
-    else
-        critInput{z} = fcnPrep(data, ScreenData, settings, 1);
-    end
+    critInput{z} = fcnPrep(data, ScreenData, settings, 1);
+
     
     % save image data if using rolling image with auto generated image
     name = func2str(Stimulus.layers(z).fcnPrep);
@@ -105,11 +98,8 @@ end
 fprintf('Done!\n');
 
 % RGB difference between each trigger frame
-if ScreenData.dlp
-    triggerFlickOffset = 0;
-else
-    triggerFlickOffset = 105;
-end
+triggerFlickOffset = 105;
+
 
 T.trialFrames = T.preStim + T.time + T.postStim + T.pause;
 T.maxTrialFrames = max(T.trialFrames,[],1);
@@ -179,29 +169,8 @@ for k=1:length(frameMatrix)
         tic     % measure draw time
         for z=1:(size(frameMatrix{k},1)-1)
             if (frameMatrix{k}(z,n)~=0)
-                if ~ScreenData.dlp
-                    %%% Normal mode %%%
-                    critInput{z} = fcnDraw{z}(ScreenData.wPtr, frameMatrix{k}(z,n), k, 1/fps, critInput{z});
-                else
-                    %%% DLP mode
-                    % It is assumed that the draw functions (fcnDraw) outputs only grayscale
-                    % images, i.e. that for each pixel the R, G and B values are the same.
-                    % Each subframe is then drawn to just one of the three RGB channels in
-                    % the order BRG.
-                    
-                    % Draw first subframe to BLUE channel
-                    [sourceFactorOld, destinationFactorOld, colorMaskOld] = ...
-                        Screen('BlendFunction', ScreenData.wPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, [0 0 1 1]);
-                    critInput{z} = fcnDraw{z}(ScreenData.wPtr, frameMatrix{k}(z,n)*3-2, k, 1/fps, critInput{z});
-                    % Draw second subframe to RED channel
-                    Screen('BlendFunction', ScreenData.wPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, [1 0 0 1]);
-                    critInput{z} = fcnDraw{z}(ScreenData.wPtr, frameMatrix{k}(z,n)*3-1, k, 1/fps, critInput{z});
-                    % Draw third subframe to GREEN channel
-                    Screen('BlendFunction', ScreenData.wPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, [0 1 0 1]);
-                    critInput{z} = fcnDraw{z}(ScreenData.wPtr, frameMatrix{k}(z,n)*3, k, 1/fps, critInput{z});
-                    % Reset blend function to original values
-                    Screen('BlendFunction', ScreenData.wPtr, sourceFactorOld, destinationFactorOld, colorMaskOld);
-                end
+                %%% Normal mode %%%
+                critInput{z} = fcnDraw{z}(ScreenData.wPtr, frameMatrix{k}(z,n), k, 1/fps, critInput{z});
             end
         end
         Screen('FillRect', ScreenData.wPtr, frameMatrix{k}(end,n), ScreenData.triggerPos);
