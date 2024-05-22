@@ -106,7 +106,7 @@ switch Name
                 fcnPrep = @colorFillPrep;
                 fcnDraw = @colorFillDraw;
                 
-                data = [127];
+                data = 127;
                 
                 rowNames = {'Brightness'};            
             
