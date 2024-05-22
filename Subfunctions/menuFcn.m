@@ -18,8 +18,6 @@ end
 switch Option
     
     case 'New'
-        %OBS! Remember to ask for saving!
-        
         answer = questdlg('Start New Project? Unsaved changes will be lost and the screen closed down.');
         
         if strcmp(answer, 'Yes')
@@ -54,7 +52,7 @@ switch Option
         
         if fileName   % FileName == false if canceled
             
-            load(strcat(pathName, fileName));
+            load(strcat(pathName, fileName), 'chstimuli', 'navData', 'screenData');
             loadedFiles = who; %names of files currently in workspace.
             %should probably be Option, chstimuli, navData, fileName,
             %loadedFiles, screenData and pathName
@@ -94,7 +92,7 @@ switch Option
         
         if fileName %if press on cancel no fileName will be given
             
-            load(strcat(pathName, fileName));
+            load(strcat(pathName, fileName), 'chstimuli');
             loadedFiles = who; %names of files currently in workspace.
             %should probably be Option, chstimuli, navData, fileName,
             %loadedFiles, screenData and pathName
@@ -119,7 +117,7 @@ switch Option
                     insertIndex = inputdlg('Enter index to insert new stim in: ');
                     
                     if ~isempty(insertIndex)
-                        insertIndex = str2num(insertIndex{1});
+                        insertIndex = str2double(insertIndex{1});
                         
                         if insertIndex == 1 %first spot reserved for main
                             insertIndex = 2;

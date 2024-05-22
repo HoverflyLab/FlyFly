@@ -27,8 +27,6 @@ end
 switch Action
     case 'Init'
         %Screen
-        rgbWhite = [255 255 255];
-        rgbBlack = [0 0 0];
         screenPartial = screenData.partial;
         screenNumber  = screenData.screenNumber;
 
@@ -74,8 +72,6 @@ switch Action
             end
         end
 
-
-        
         AssertOpenGL; %Check if openGL is available
         try
             oldLevel = Screen('Preference', 'Verbosity', 1); % 1 = critical errors only
@@ -97,18 +93,13 @@ switch Action
             end
 
             screenData.bgColor = chstimuli(index).targetBgColor;
-            gammatable = rgbCal(repmat([0:255]',1,3), screenData.gamma)/255;
+            gammatable = rgbCal(repmat((0:255)',1,3), screenData.gamma)/255;
 
             Screen('LoadNormalizedGammaTable', screenNumber, gammatable);
             disp(['Gamma table loaded with γ=' num2str(screenData.gamma)]);
             disp('If this value is incorrect, kill screen and change it');
 
-            screenData.hz     = Screen('FrameRate', wPtr); %screenData.hz
-%             disp('Determining monitor flip interval. This can take a while...');
-%             [monitorFlipInterval nrValidSamples stddev] = Screen('GetFlipInterval', wPtr, 25);
-%             screenData.ifi    = monitorFlipInterval;
-%             disp(sprintf('Over %d samples the mean flip interval was %.2f ms (%.2f Hz), stddev=%.2f us', ...
-%                 nrValidSamples, monitorFlipInterval*1000, 1/monitorFlipInterval, stddev*1000000));
+            screenData.hz     = Screen('FrameRate', wPtr);
             screenData.ifi    = Screen('GetFlipInterval', wPtr);   % Estimate monitor flip interval
             
             screenData.isInit         = 1;
@@ -133,7 +124,7 @@ switch Action
         
     case 'Kill'
         try
-            gammatable = repmat([0:255]',1,3)./255;
+            gammatable = repmat((0:255)',1,3)./255;
             Screen('LoadNormalizedGammaTable', screenData.wPtr, gammatable);
             
             %Closing
@@ -214,8 +205,6 @@ switch Action
         Screen('DrawLine', wPtr, [200 200 200], 0, flyPos(2), partial(3), flyPos(2));
         Screen('DrawLine', wPtr, [200 200 200], flyPos(1), 0, flyPos(1), partial(4));
         Screen('FillOval', wPtr, [200 200 200], [flyPos(1)-3  flyPos(2)-3  flyPos(1)+3  flyPos(2)+3]);
-                
-        %Screen('FillRect', navData.screenWptr, [255 255 255]);
         Screen('FillRect', screenData.wPtr, screenData.triggerRGBoff, screenData.triggerPos); %trigger off
         Screen(screenData.wPtr, 'Flip');
         

@@ -1,4 +1,4 @@
-function [data rowNames] = getTable()
+function [data, rowNames] = getTable()
 % load active parameter table of flyfly
 % use in conjunction with setTable for easy manipulation of parameter data
 

@@ -1,4 +1,4 @@
-function imageArray = getStimImages(Stimulus, ScreenData, UserSettings, TrialSubset, fps)
+function imageArray = getStimImages(Stimulus, ScreenData, ~, TrialSubset, fps)
 %function imageArray = getStimImages(Stimulus, ScreenData, UserSettings,
 %TrialSubset, fps)
 %
@@ -67,7 +67,6 @@ for z = 1:numLayers
     end 
     
     data     = Stimulus.layers(z).data(1:end, TrialSubset);
-    impulse  = Stimulus.layers(z).impulse;
 
     % GET STIMULUS TIMES FOR EACH LAYER
     T.time(z,:)     = data(end-3,:);
@@ -88,7 +87,7 @@ for z = 1:numLayers
     % save image data if using rolling image with auto generated image
     name = func2str(Stimulus.layers(z).fcnPrep);
     name = name(1:min(12, length(name)));
-    if strcmp(name,'rollingImage');
+    if strcmp(name,'rollingImage')
         Stimulus.layers(z).images = critInput{z}.images;
         critInput{z} = rmfield(critInput{z},'images');
     end
@@ -131,8 +130,6 @@ for k=1:numRuns
     end
 end
 
-totalFrames = N;
-
 %Animation loop internal parameters
 %--------------------------------------------------------------------------
 % Create struct and allocate memory for datalog
@@ -157,14 +154,14 @@ Screen('FillRect', ScreenData.wPtr, ScreenData.triggerRGBoff, ScreenData.trigger
 % CRITICAL SECTION
 %--------------------------------------------------------------------------
 
-vbl = Screen('Flip', ScreenData.wPtr);
+Screen('Flip', ScreenData.wPtr);
 
+% THIS IS INCREDIBLY JANKY AND NEEDS TO BE REVIEWED
 p = 1;
-
+imageArray = cell(1, length(frameMatrix));
 for k=1:length(frameMatrix)
     N = size(frameMatrix{k},2);
     n = 1;
-    nd = 0;
     while (n<=N)
         tic     % measure draw time
         for z=1:(size(frameMatrix{k},1)-1)
@@ -182,8 +179,6 @@ for k=1:length(frameMatrix)
         glClearColor(1,1,1, 0);
         % Clear out the backbuffer
         glClear;
-        
-        %[vbl, ~, ~, ~, ~] = Screen('Flip', ScreenData.wPtr, vbl+(0.7)/fps);
         
         p = p+1;
         n = n+1;

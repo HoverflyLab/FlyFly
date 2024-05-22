@@ -15,7 +15,7 @@ n = navData.marker(k);
 chstimuli(k).layers(n).data = data;
 
 if nargin == 2
-    chstimuli(k).layers(n).parameters = rowNames;
+    chstimuli(k).layers(n).parameters = rowNames; %#ok<STRNU> 'setRoot' saves this variable to environment
 end
 
 setRoot;
