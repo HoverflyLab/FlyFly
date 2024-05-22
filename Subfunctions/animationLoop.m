@@ -102,7 +102,6 @@ for z = 1:numLayers
     end 
     
     data     = stimulus.layers(z).data(1:end, trialSubset);
-    impulse  = stimulus.layers(z).impulse;
 
     T.time(z,:)     = data(end-3,:);
     T.pause(z,:)    = data(end-2,:);
@@ -144,12 +143,6 @@ fprintf('Done!\n');
 
 % RGB difference between each trigger frame
 triggerFlickOffset = 105;
-
-
-% Set up location and filename for video recordings
-videoLocation = navData.saveDataPathName;
-videoName = "recording1.mp4";
-fullVideoName = fullfile(videoLocation, videoName);
 
 % Set up connection to cammera equipment
 if S.recording ~= 0 && S.useGuvcview ~= 1
@@ -342,7 +335,7 @@ for k=1:length(frameMatrix)
         Screen('FillRect', S.wPtr, frameMatrix{k}(end,n), S.triggerPos);
         Screen('DrawingFinished',S.wPtr);  % supposedly speeds up performance
         
-        drawTime = [drawTime; toc];
+        drawTime = [drawTime; toc]; %#ok<AGROW> When this loop ends depends on hardware, can't pre-allocate space for this
         
         [vbl, ~, ~, missed, ~] = Screen('Flip', S.wPtr, vbl+(0.7)*S.ifi);
         
@@ -532,7 +525,6 @@ if TRun <= length(Tlength)
     else
         nPause = Pauset(:,TRun);
     end  
-    %disp(nPause);
     if (nPause ~= 0)
         disp('pause is more than 0, Ending Recording');
         stop(video);
@@ -542,7 +534,6 @@ if TRun <= length(Tlength)
             pause(.1);
         end
     else
-        %disp('Gets this far');
         L = length(Tlength);
         if(TRun == L)
             disp('End of Trials, Ending Recording');
@@ -574,11 +565,9 @@ if TRun <= length(Tlength)
 end
 
 
-function fullVideoName = stopGuvcview(TRun, Pauset, Tlength)% Function to stop recording video from webcam (Current Trial Number, Current trial pause time in frames, list of trials,Time of Stimulus Start, Stimulus Name)
+function stopGuvcview(TRun, Pauset, Tlength)% Function to stop recording video from webcam (Current Trial Number, Current trial pause time in frames, list of trials,Time of Stimulus Start, Stimulus Name)
 path = which('recordCam.sh');
 command = "bash " + path + " &";
-%disp('end record');
-fullVideoName = 0;
 
 if TRun <= length(Tlength) 
     if(TRun ~= length(Tlength))
@@ -586,12 +575,10 @@ if TRun <= length(Tlength)
     else
         nPause = Pauset(:,TRun);
     end  
-    %disp(nPause);
     if (nPause ~= 0)
         clear newVideoName concat finalTime timeR timeNum
         [~, ~] = system(command, '-echo');
     else
-        %disp('Gets this far');
         L = length(Tlength);
         if(TRun == L)
             clear newVideoName concat finalTime timeR timeNum
