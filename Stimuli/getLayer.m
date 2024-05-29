@@ -1,12 +1,10 @@
 function layer = getLayer(Name)
-% All different layers are defined here.
-%
-
 %--------------------------------------------------------------------------
 % FlyFly v2
 %
 % Jonas Henriksson, 2010                                   info@flyfly.se
 %--------------------------------------------------------------------------
+% getLayer obtains relevant layer information and stores it for when 
 
 %default settings for all objects
 settings.global = 1;
@@ -22,14 +20,6 @@ settings.edit3  = {'OFF', 0};
 settings.edit4  = {'OFF', 0};
 settings.edit5  = {'OFF', 0};
 
-% experiment_names = {'Rect Target', 'Sine Grating', 'Rolling Image', ...
-%             'Color Fill', '.Mat Sequence', 'Aperture', 'Flicker Rect', ...
-%             'White Noise', 'Sine Grating RF', 'Mouse Target', 'Grid', ...
-%             'TextString', 'Rolling Image MII', 'Dual Apertures', ...
-%             'Starfield 1: Cylinder', 'Starfield 2: 3D Space', '3D Target', ...
-%             'Image Target' 'Paloma Target Replication', '3D Target (Pursuit)', ...
-%             'Starfield 3: Jumps'};
-   
 experiment_names = {...
     'Rect Target', 'Image Target', '3D Target', ...                 % 1, 2, 3
     'Sine Grating', 'Color Fill', 'Rolling Image', ...              % 4, 5, 6
