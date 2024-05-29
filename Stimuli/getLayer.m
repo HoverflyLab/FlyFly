@@ -33,13 +33,13 @@ settings.edit5  = {'OFF', 0};
 experiment_names = {...
     'Rect Target', 'Image Target', '3D Target', ...                 % 1, 2, 3
     'Sine Grating', 'Color Fill', 'Rolling Image', ...              % 4, 5, 6
-    'Rolling Image MII', 'Starfield 2: 3D Space', 'Loom', ...       % 7, 8, 9
-    'Sine Grating RF', 'Aperture', 'Dual Apertures', ...            % 10, 11, 12
-    '---- UNMAINTAINED STIMULI ----', ...                           % 13 (dummy)
+    'Rolling Image MII', 'Starfield 2: 3D Space', 'Starfield 3: Jumps', ... % 7, 8, 9
+    '---- OTHER STIMULI ----', ...                                  % 10 (dummy)
+    'Sine Grating RF', 'Aperture', 'Dual Apertures', ...            % 11, 12, 13
     'Flicker Rect', 'Mouse Target', 'Grid', ...                     % 14, 15, 16
     '.Mat Sequence', 'Paloma Target Replication', ...               % 17, 18
-    'Starfield 3: Jumps', 'Image Target Flicker', 'Target3D XYZ', 'RectTarget Relative', ...
-    'Starfield Flicker'};                                                        % 19
+    'Loom', 'Image Target Flicker', 'Target3D XYZ', 'RectTarget Relative', ...
+    'Starfield Flicker'};                                                          % 19
         
 % common_data = the default timing data
 common_data = [60; 0; 0; 0];

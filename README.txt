@@ -31,6 +31,10 @@ Version History
 ------------------------------------------------------------------------------------------
 4.X Updates
 ------------------------------------------------------------------------------------------
+4.1.1 Hotfix
+* Added a temporary fix for stimuli settings not being initialised correctly in 'getLayer.m'
+
+------------------------------------------------------------------------------------------
 4.1
 
 * Added camera functionality to FlyFly; users can now select an option in the settings where if they have a camera connected, a video will start recording whilst the stimuli is being shown.

@@ -23,7 +23,7 @@ function flyfly()
 %
 
 disp(' ');
-disp(' -FlyFly 4.1- ');
+disp(' -FlyFly 4.1.1- ');
 
 addpath(cd, [cd '/' genpath('Subfunctions')], [cd '/' genpath('Stimuli')]);
 clearRoot;
