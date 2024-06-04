@@ -4,21 +4,8 @@ function layer = getLayer(Name)
 %
 % Jonas Henriksson, 2010                                   info@flyfly.se
 %--------------------------------------------------------------------------
-% getLayer obtains relevant layer information and stores it for when 
+% getLayer obtains relevant layer information and stores it 
 
-    % Default settings for all objects
-    settings.global = 1;
-    settings.path1  = {'OFF', 0};
-    settings.box1   = {'OFF', 0};
-    settings.box2   = {'OFF', 0};
-    settings.box3   = {'OFF', 0};
-    settings.box4   = {'OFF', 0};
-    settings.box5   = {'OFF', 0};
-    settings.edit1  = {'OFF', 0};
-    settings.edit2  = {'OFF', 0};
-    settings.edit3  = {'OFF', 0};
-    settings.edit4  = {'OFF', 0};
-    settings.edit5  = {'OFF', 0};
 
     % Get directory to stimulus folder and extract folder names
     stimDirectory = which('getLayer');
@@ -26,6 +13,7 @@ function layer = getLayer(Name)
     stimDirectory = stimDirectory{1};
 
     fileNames = dir(fullfile(stimDirectory));
+    fileNames = {fileNames.name}; % We only care about the names themselves
 
     % Loop over all file names to find stimuli folders, remove all other
     % names from the array
@@ -33,34 +21,15 @@ function layer = getLayer(Name)
     stims = stims(~cellfun('isempty', stims));
     
     % Chop off the number from the stimuli folder to get just the stimuli name
-    experiment_names = cellfun(@(x) x(5:end), stims);                                                    % 19
-            
-    % common_data = the default timing data
-    common_data = [60; 0; 0; 0];
-    % If individual stimuli require something other than the default, modify
-    % timing_data instead of common_data
-    timing_data = common_data;
-    
-    switch Name
-        
-        case 'List' %return list of available draw functions
-            layer = experiment_names;
-            
-        otherwise
-            switch Name
-            end
-            
-            %set layer
-            
-            layer = struct(...
-                'name',       experiment_names{Name}, ...
-                'fcnPrep',    fcnPrep, ...
-                'fcnDraw',    fcnDraw, ...
-                'parameters', {[rowNames, {'Time', 'PauseTime', 'PreStimTime', 'PostStimTime'}]}, ...
-                'data',       [data; timing_data], ...
-                'settings',   settings, ...
-                'impulse',    false);
+    experimentNames = cellfun(@(x) x(5:end), stims);
+
+    % If needing to initalise the main GUI, stop here
+    if Name == "list"
+        layer = experimentNames;
+        return
     end
+    
+
 
 end
 

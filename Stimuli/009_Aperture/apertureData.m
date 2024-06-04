@@ -10,7 +10,7 @@ function layerData = apertureData()
     timingData = [60; 0; 0; 0];
     % Needed for layer settings manager to work
     settings.global   = 1;
-    settings.boxes{1} = {'Use Rect', 0};
+    settings.box{1} = {'Use Rect', 0};
     
 
     layerData = struct(...

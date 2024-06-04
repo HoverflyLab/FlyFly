@@ -12,7 +12,7 @@ function layerData = sineGratingRfData()
     
     % Needed for layer settings manager to work
     settings.global = 1;
-    settings.boxes{1}   = {'Counter Clockwise', 0};
+    settings.box{1}   = {'Counter Clockwise', 0};
     
 
     layerData = struct(...

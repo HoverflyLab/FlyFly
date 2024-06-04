@@ -13,11 +13,11 @@ function layerData = rollingImageM2Data()
     % Needed for layer settings manager to work
     settings.global   = 1;
     settings.path     = {'Image Path', 'Images/defaultImage.png', '*.png'};
-    settings.boxes{1} = {'Image offset = ', 1};
-    settings.boxes{2} = {'X pos = Xpos + ', 0};
-    settings.boxes{3} = {'Y pos = Ypos + ', 0};
-    settings.boxes{4} = {'Generate image', 0};
-    settings.boxes{5} = {'Horizontal bars', 0};
+    settings.box{1} = {'Image offset = ', 1};
+    settings.box{2} = {'X pos = Xpos + ', 0};
+    settings.box{3} = {'Y pos = Ypos + ', 0};
+    settings.box{4} = {'Generate image', 0};
+    settings.box{5} = {'Horizontal bars', 0};
     
     %T: Total experiment time
     %t: Time in current trial

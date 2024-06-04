@@ -12,8 +12,8 @@ function layerData = DualAperturesData()
     timingData = [60; 0; 0; 0];
     % Needed for layer settings manager to work
     settings.global   = 1;
-    settings.boxes{1} = {'Use Rect for 1', 0};
-    settings.boxes{2} = {'Use Rect for 2', 0};
+    settings.box{1} = {'Use Rect for 1', 0};
+    settings.box{2} = {'Use Rect for 2', 0};
 
     layerData = struct(...
     'name',       "Dual Apertures", ...
