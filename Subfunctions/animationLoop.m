@@ -247,7 +247,7 @@ if userSettings.saveParameters
     ddstimulus = struct(stimulus);
     ddstimulus = rmfield(ddstimulus, 'hGui');   % opens figure and causes Matlab to hang
     % DEBUGDATA CREATED HERE!
-    debugData.stimulus = ddstimulus;
+    debugData.stimulus     = ddstimulus;
     debugData.screenData   = screenData;
     debugData.userSettings = userSettings;
     debugData.trialSubset  = trialSubset;
@@ -303,6 +303,8 @@ end
 critSecStart = tic;
 
 drawTime = [];
+% Recalculate precise time as close to stim as possible
+timeStartPrecision = string(datetime('now', 'Format', "dd-MMM-yyyy HH:mm:ss:SSS")); %exact time (ms precision) as time vector
 
 for k=1:length(frameMatrix)
     fprintf(' - TRIAL %d starting at %.6f s -\n\n',k,toc(critSecStart));
@@ -465,12 +467,12 @@ if userSettings.saveParameters
                mkdir(videopath); 
         end
         concat = strcat(videopath, stimulus.name, '_', timeStart, '.mp4');
-        concat=regexprep(concat, ':', '_');
+        concat = regexprep(concat, ':', '_');
         movefile('capture.mp4',concat);
     end
 
 
-    message    = 'NOTE: STIMULUS PLAYED TO THE END';
+    message = 'NOTE: STIMULUS PLAYED TO THE END';
     
     try
         % Change capitalisation to keep consistent with lab scripts
