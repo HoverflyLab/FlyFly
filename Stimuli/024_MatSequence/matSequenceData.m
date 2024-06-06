@@ -11,7 +11,7 @@ function layerData = matSequenceData()
     % Needed for layer settings manager to work
     settings.global   = 0;
     settings.path     = {'.Mat path: ', [cd '/Mat sequences/out.mat'], '*.mat'};
-    settings.boxes{1} = {'Use fullscreen', 0};
+    settings.box{1} = {'Use fullscreen', 0};
     
 
     layerData = struct(...

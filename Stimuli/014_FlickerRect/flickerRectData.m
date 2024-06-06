@@ -11,8 +11,8 @@ function layerData = flickerRectData()
     timingData = [60; 0; 0; 0];
     % Needed for layer settings manager to work
     settings.global = 1;
-    settings.boxes{1} = {'Offset X function', 0};
-    settings.boxes{2} = {'Offset Y function', 0};
+    settings.box{1} = {'Offset X function', 0};
+    settings.box{2} = {'Offset Y function', 0};
     settings.edit{1}  = {'X function: ', '100*sin(2*pi/3 *(n-1)*ifi)'};
     settings.edit{2}  = {'Y function: ', '100*cos(2*pi/3 *(n-1)*ifi)'};
 
