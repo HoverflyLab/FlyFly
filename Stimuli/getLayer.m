@@ -29,7 +29,7 @@ stims = stims(~cellfun('isempty', stims));
 experimentNames = cellfun(@(x) x(5:end), stims, 'UniformOutput', false);
 
 % If needing to initalise the main GUI, stop here
-if layerName == "list"
+if layerName == "List"
     layer = experimentNames;
     return
 end
