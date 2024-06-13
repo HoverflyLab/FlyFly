@@ -170,9 +170,9 @@ end
 % For older stimuli (pre-4.2), stims need to be patched to handle new
 % stimuli framework. This function handles looping through all layers
 function patchedStim = convertOldStimSettings(chstimulus)
-    disp("This stimulus was created prior FlyFly 4.2, please wait as we update your stimulus for compatability.")
+    disp("This stimulus was created prior to FlyFly 4.2, please wait as we update your stimulus for compatability.")
     patchedStim = chstimulus;
-    % Loop over all stims (Not main waindow)
+    % Loop over all stims, layers, and settings (Not main waindow)
     for stim = 2:length(patchedStim)
         currentStim = patchedStim(stim);
         for layer = 1:length(currentStim.layers)
@@ -200,12 +200,13 @@ function formattedSetting = reformatSettings(settings)
             end
         end
     end
-    if ~settings.edit1{1} == "OFF"
+
+    % Is this incredibly janky? Yes, but this is needed to patch old
+    % stimuli effectively :(
+    if any([settings.edit1{1} ~= 'OFF', settings.edit2{1} ~= 'OFF', settings.edit3{1} ~= 'OFF', settings.edit4{1} ~= "OFF", settings.edit5{1} ~= "OFF"])
         for index = 1:5
             if eval("settings.edit" + num2str(index) + "{1}") ~=  "OFF"
                 formattedSetting.edit{index} = eval("settings.edit" + num2str(index));
-            else
-                break
             end
         end
     end

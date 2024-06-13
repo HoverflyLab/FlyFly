@@ -16,8 +16,8 @@ function layerData = rollingImageData()
     settings.box{2} = {'DLP  mode', 0};
     settings.box{3} = {'Generate image', 0};
     settings.box{4} = {'Horizontal bars', 0};
-    settings.edit{3}  = {'(width)','640'};
-    settings.edit{4}  = {'(height)','480'};
+    settings.edit{1}  = {'(width)','640'};
+    settings.edit{2}  = {'(height)','480'};
 
     
 
