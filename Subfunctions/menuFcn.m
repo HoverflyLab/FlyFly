@@ -61,10 +61,11 @@ function menuFcn(Option)
                     try
                         if isfield(chstimuli(2).layers(1).settings(1), 'box1')
                             convertOldStimSettings(chstimuli);
+                            disp("Old stimuli patched successfully")
                         end
                     catch ERR
                         disp("Layer settings issue, see below. Skipping patching")
-                        rethrow(ME)
+                        rethrow(ERR)
                     end
                     
                     setappdata(0, 'chstimuli', chstimuli);
@@ -171,12 +172,12 @@ end
 % stimuli framework. This function handles looping through all layers
 function patchedStim = convertOldStimSettings(chstimulus)
     disp("This stimulus was created prior to FlyFly 4.2, please wait as we update your stimulus for compatability.")
-    patchedStim = chstimulus;
+    patchedStim = struct();
     % Loop over all stims, layers, and settings (Not main waindow)
-    for stim = 2:length(patchedStim)
-        currentStim = patchedStim(stim);
+    for stim = 2:length(chstimulus)
+        currentStim = chstimulus(stim);
         for layer = 1:length(currentStim.layers)
-            currentLayer = currentStim(layer);
+            currentLayer = currentStim.layers(layer);
             for setting = 1:length(currentLayer.settings)
                 currentSetting = currentLayer.settings(setting);
                 patchedStim(stim).layers(layer).settings(setting) = reformatSettings(currentSetting);
@@ -204,9 +205,11 @@ function formattedSetting = reformatSettings(settings)
     % Is this incredibly janky? Yes, but this is needed to patch old
     % stimuli effectively :(
     if any([settings.edit1{1} ~= 'OFF', settings.edit2{1} ~= 'OFF', settings.edit3{1} ~= 'OFF', settings.edit4{1} ~= "OFF", settings.edit5{1} ~= "OFF"])
+        position = 1;
         for index = 1:5
             if eval("settings.edit" + num2str(index) + "{1}") ~=  "OFF"
-                formattedSetting.edit{index} = eval("settings.edit" + num2str(index));
+                formattedSetting.edit{position} = eval("settings.edit" + num2str(index));
+                position = position + 1;
             end
         end
     end

@@ -42,8 +42,8 @@ for k = 1:numRuns
     
     if StimSettings(k).box3{2} && k==1
         % Generate bar image
-        x = str2num(StimSettings(k).edit3{2});
-        y = str2num(StimSettings(k).edit4{2});
+        x = str2num(StimSettings(k).edit1{2});
+        y = str2num(StimSettings(k).edit2{2});
         imRect(:,k) = [0 0 x y]';
         if ~StimSettings(k).box4{2}
             I = generateBarStimImage(x,y);
