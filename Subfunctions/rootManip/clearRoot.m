@@ -6,6 +6,7 @@
 % Jonas Henriksson, 2010                                   info@flyfly.se
 %--------------------------------------------------------------------------
 
+% These need to give more accurate commands 
 try
     rmappdata(0, 'chstimuli');   %Remove appdata from root
 catch
