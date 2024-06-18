@@ -8,6 +8,84 @@ using namespace Spinnaker::GenApi;
 using namespace Spinnaker::GenICam;
 using namespace std;
 
+// Entry point; 
+int main(int /*argc*/, char** /*argv*/)
+{
+    // Since this application saves images in the current folder
+    // we must ensure that we have permission to write to this folder.
+    // If we do not have permission, fail right away.
+    FILE* tempFile = fopen("test.txt", "w+");
+    if (tempFile == nullptr)
+    {
+        cout << "Failed to create file in current folder.  Please check "
+                "permissions."
+             << endl;
+        cout << "Press Enter to exit..." << endl;
+        getchar();
+        return -1;
+    }
+    fclose(tempFile);
+    remove("test.txt");
+ 
+    int result = 0;
+ 
+    // Print application build information
+    cout << "Application build date: " << __DATE__ << " " << __TIME__ << endl << endl;
+ 
+    // Retrieve singleton reference to system object
+    SystemPtr system = System::GetInstance();
+ 
+    // Print out current library version
+    const LibraryVersion spinnakerLibraryVersion = system->GetLibraryVersion();
+    cout << "Spinnaker library version: " << spinnakerLibraryVersion.major << "." << spinnakerLibraryVersion.minor
+         << "." << spinnakerLibraryVersion.type << "." << spinnakerLibraryVersion.build << endl
+         << endl;
+ 
+    // Retrieve list of cameras from the system
+    CameraList camList = system->GetCameras();
+ 
+    unsigned int numCameras = camList.GetSize();
+ 
+    cout << "Number of cameras detected: " << numCameras << endl << endl;
+ 
+    // Finish if there are no cameras
+    if (numCameras == 0)
+    {
+        // Clear camera list before releasing system
+        camList.Clear();
+ 
+        // Release system
+        system->ReleaseInstance();
+ 
+        cout << "Not enough cameras!" << endl;
+        cout << "Done! Press Enter to exit..." << endl;
+        getchar();
+ 
+        return -1;
+    }
+ 
+    // Run example on each camera
+    for (unsigned int i = 0; i < numCameras; i++)
+    {
+        cout << endl << "Running example for camera " << i << "..." << endl;
+ 
+        result = result | RunSingleCamera(camList.GetByIndex(i));
+ 
+        cout << "Camera " << i << " example complete..." << endl << endl;
+    }
+ 
+    // Clear camera list before releasing system
+    camList.Clear();
+ 
+    // Release system
+    system->ReleaseInstance();
+ 
+    cout << endl << "Done! Press Enter to exit..." << endl;
+    getchar();
+ 
+    return result;
+}
+
 // Acquire images and save them
 // This function acquires and saves 10 images from a device.
 int AcquireImages(CameraPtr pCam, INodeMap& nodeMap, INodeMap& nodeMapTLDevice)
