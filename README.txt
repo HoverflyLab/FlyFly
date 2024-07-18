@@ -31,6 +31,17 @@ Version History
 ------------------------------------------------------------------------------------------
 4.X Updates
 ------------------------------------------------------------------------------------------
+4.2 
+* Sweeping backend changes to increase readability and optimisation
+* Removed all references to GUIDE, app is fully contained in Matlab App Designer
+* Completely redone how stimuli are handled in loading, instead of being a hardcoded list, stimuli are read and loaded dynamically based on the 'stimuli' folder
+* It is now much easier to add / remove stimuli from the load order
+
+------------------------------------------------------------------------------------------
+4.1.1 Hotfix
+* Added a temporary fix for stimuli settings not being initialised correctly in 'getLayer.m'
+
+------------------------------------------------------------------------------------------
 4.1
 
 * Added camera functionality to FlyFly; users can now select an option in the settings where if they have a camera connected, a video will start recording whilst the stimuli is being shown.
