@@ -28,6 +28,7 @@ stims = stims(~cellfun('isempty', stims));
 % Chop off the number from the stimuli folder to get just the stimuli name
 experimentNames = cellfun(@(x) x(5:end), stims, 'UniformOutput', false);
 
+
 % If needing to initalise the main GUI, stop here
 if layerName == "List"
     layer = experimentNames;

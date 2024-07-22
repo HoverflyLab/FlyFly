@@ -31,6 +31,7 @@ Version History
 ------------------------------------------------------------------------------------------
 4.X Updates
 ------------------------------------------------------------------------------------------
+
 4.2 
 * Sweeping backend changes to increase readability and optimisation
 * Removed all references to GUIDE, app is fully contained in Matlab App Designer
