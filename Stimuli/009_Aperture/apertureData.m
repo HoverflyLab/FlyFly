@@ -1,0 +1,23 @@
+function layerData = apertureData()
+    % Handles to the functions in this folder
+    fcnPrep = @aperturePrep;
+    fcnDraw = @apertureDraw;
+
+    settingNames = {'Transp Surround', 'Transp Hole', 'Width', 'Height', 'Xpos', 'Ypos'};
+    % Data corresponds to the above setting names
+    settingDefaults = [50; 0; 100; 100; 320; 280];
+    % Defaults for timing
+    timingData = [60; 0; 0; 0];
+    % Needed for layer settings manager to work
+    settings.global   = 1;
+    settings.box{1} = {'Use Rect', 0};
+    
+
+    layerData = struct(...
+    'name',       'Aperture', ...
+    'fcnPrep',    fcnPrep, ...
+    'fcnDraw',    fcnDraw, ...
+    'parameters', {[settingNames, {'Time', 'PauseTime', 'PreStimTime', 'PostStimTime'}]}, ...
+    'data',       [settingDefaults; timingData], ...
+    'settings',   settings, ...
+    'impulse',    false);

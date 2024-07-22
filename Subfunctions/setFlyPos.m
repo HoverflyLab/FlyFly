@@ -14,10 +14,6 @@ wPtr = ScreenSettings.wPtr;
 partial = ScreenSettings.partial;
 ifi  = ScreenSettings.ifi;
 
-screenRes = get(0, 'ScreenSize');
-
-numScreens = max(Screen('Screens'));
-
 flyPos = 0;
 oldButtons = [0 0 0];
 numClicks = 0;
