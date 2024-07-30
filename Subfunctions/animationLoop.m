@@ -320,9 +320,14 @@ for k=1:length(frameMatrix)
                 startGuvcview(k,T.pause(z,:),1:length(frameMatrix));
         end
     end
-        
+    % n = amount of elapsed frames
     while (n<=N)
         tic     % measure draw time
+        if mod(n, 60) == 0
+            if getappdata(0, 'cancelInterrupt') == true
+                return
+            end
+        end
         for z=1:(size(frameMatrix{k},1)-1)
             if (frameMatrix{k}(z,n)~=0)
                 %%% Normal mode %%%
