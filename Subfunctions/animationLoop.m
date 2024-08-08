@@ -1,4 +1,4 @@
-function skippedFrames = animationLoop(stimulus, screenData, userSettings, trialSubset, previewChoice)
+function [skippedFrames, stimCancelled] = animationLoop(stimulus, screenData, userSettings, trialSubset, previewChoice)
 %function skippedFrames = animationLoop(Stimulus, ScreenData, UserSettings, TrialSubset, video)
 % 
 % This functions runs the loop that draws the stimuli to the screen in
@@ -25,6 +25,9 @@ function skippedFrames = animationLoop(stimulus, screenData, userSettings, trial
 %--------------------------------------------------------------------------
 
 SKIP_PROP_THRESHOLD = 3;
+
+stimCancelled = 0;
+skippedFrames = 0;
 
 numLayers = length(stimulus.layers);
 numRuns   = length(trialSubset);
@@ -324,7 +327,9 @@ for k=1:length(frameMatrix)
     while (n<=N)
         tic     % measure draw time
         if mod(n, 60) == 0
+            drawnow
             if getappdata(0, 'cancelInterrupt') == true
+                stimCancelled = 1;
                 return
             end
         end
