@@ -82,7 +82,6 @@ for z = 1:numLayers
     
     critInput{z} = fcnPrep(data, ScreenData, settings, 1);
 
-    
     % save image data if using rolling image with auto generated image
     name = func2str(Stimulus.layers(z).fcnPrep);
     name = name(1:min(12, length(name)));
@@ -153,7 +152,7 @@ Screen('FillRect', ScreenData.wPtr, ScreenData.triggerRGBoff, ScreenData.trigger
 
 % CRITICAL SECTION
 %--------------------------------------------------------------------------
-
+fprintf('Generating frames of stimulus... ');
 Screen('Flip', ScreenData.wPtr);
 
 % THIS IS INCREDIBLY JANKY AND NEEDS TO BE REVIEWED
@@ -172,7 +171,9 @@ for k=1:length(frameMatrix)
         end
         Screen('FillRect', ScreenData.wPtr, frameMatrix{k}(end,n), ScreenData.triggerPos);
         Screen('DrawingFinished',ScreenData.wPtr);  % supposedly speeds up performance
-        
+        if ScreenData.useRotated
+            Screen('Flip', ScreenData.wPtr);
+        end
         imageArray{p} = Screen('GetImage', ScreenData.wPtr,[],'backBuffer');
         
         % Set background color to 'white' (the 'clear' color)
@@ -194,6 +195,7 @@ Screen('Flip', ScreenData.wPtr);
 Priority(0); %set normal priority
 %----------------------------------------------------------------------
 % /CRITICAL SECTION
+fprintf('Done!\n');
 
 % Special stuff for the starfield cylinder stimulus
 for z = 1:numLayers

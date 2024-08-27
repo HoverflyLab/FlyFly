@@ -298,9 +298,6 @@ vbl = Screen('Flip', S.wPtr);
 % Turn on camera and delay to account for stutters
 if S.recording ~= 0 && S.useGuvcview == 0
     preview(video);
-    pause('on')
-    pause(2)
-    pause('off')
 end
 
 critSecStart = tic;
