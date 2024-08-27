@@ -25,7 +25,6 @@ ScreenData.hz  = fps;
 
 NumSubframes = 1;
 
-    
 fprintf('Calculating... ');
 for z = 1:numLayers
     % GET CRITICAL INPUT AND DRAW FUNCTION FOR EACH LAYER
@@ -103,6 +102,7 @@ triggerFlickOffset = 105;
 T.trialFrames = T.preStim + T.time + T.postStim + T.pause;
 T.maxTrialFrames = max(T.trialFrames,[],1);
 
+fprintf('Building frame matrix... ');
 % Build frame matrix, this holds information on what layer frame to be
 % drawn for each "real" frame and/or if the trigger should be visible.
 % frameMatrix consists of as many cells as there are trials. Each of these
@@ -129,7 +129,7 @@ for k=1:numRuns
         frameMatrix{k}(:,n) = frames;
     end
 end
-
+fprintf('Done!\n');
 %Animation loop internal parameters
 %--------------------------------------------------------------------------
 % Create struct and allocate memory for datalog
