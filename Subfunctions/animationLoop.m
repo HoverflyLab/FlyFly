@@ -1,4 +1,4 @@
-function skippedFrames = animationLoop(stimulus, screenData, userSettings, trialSubset, previewChoice)
+function [skippedFrames, stimCancelled] = animationLoop(stimulus, screenData, userSettings, trialSubset, previewChoice)
 %function skippedFrames = animationLoop(Stimulus, ScreenData, UserSettings, TrialSubset, video)
 % 
 % This functions runs the loop that draws the stimuli to the screen in
@@ -25,6 +25,9 @@ function skippedFrames = animationLoop(stimulus, screenData, userSettings, trial
 %--------------------------------------------------------------------------
 
 SKIP_PROP_THRESHOLD = 3;
+
+stimCancelled = 0;
+skippedFrames = 0;
 
 numLayers = length(stimulus.layers);
 numRuns   = length(trialSubset);
@@ -295,9 +298,6 @@ vbl = Screen('Flip', S.wPtr);
 % Turn on camera and delay to account for stutters
 if S.recording ~= 0 && S.useGuvcview == 0
     preview(video);
-    pause('on')
-    pause(2)
-    pause('off')
 end
 
 critSecStart = tic;
@@ -320,9 +320,16 @@ for k=1:length(frameMatrix)
                 startGuvcview(k,T.pause(z,:),1:length(frameMatrix));
         end
     end
-        
+    % n = amount of elapsed frames
     while (n<=N)
         tic     % measure draw time
+        if mod(n, 60) == 0
+            drawnow
+            if getappdata(0, 'cancelInterrupt') == true
+                stimCancelled = 1;
+                return
+            end
+        end
         for z=1:(size(frameMatrix{k},1)-1)
             if (frameMatrix{k}(z,n)~=0)
                 %%% Normal mode %%%
