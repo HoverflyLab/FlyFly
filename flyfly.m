@@ -23,9 +23,9 @@ function flyfly()
 %
 
 disp(' ');
-disp(' -FlyFly 4.2- ');
+disp(' -FlyFly 4.2.1- ');
 
 addpath(cd, [cd '/' genpath('Subfunctions')], [cd '/' genpath('Stimuli')]);
-% This command is set to be removed in a future release
+% Phasing this out in a future update
 %clearRoot;
 main;
