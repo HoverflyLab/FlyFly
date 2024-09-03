@@ -31,12 +31,6 @@ for k = 1:numRuns
     [Iorig, ~, alpha] = imread(imagePath);
     Iorig = double(Iorig);
     
-%     stop_image = P.bright1(k)*(Iorig-127) + 127;
-%     if ~isempty(alpha)
-%         stop_image(:,:,4) = alpha;
-%     end
-%     stop_texture = Screen('MakeTexture', ScreenData.wPtr, stop_image);
-    
     N = P.t(k);
     
     screen_dist = ScreenData.flyDistance/100;   % in m
