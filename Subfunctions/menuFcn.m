@@ -75,11 +75,6 @@ function menuFcn(Option)
                     
                     % Load old screen values if no screen is currently active
                     if ~tempData.isInit
-                        % When running old stimuli, check for existence of new
-                        % variables and add if not present
-                        if ~isfield(screenData, "videoAdaptor")
-                            screenData.videoAdaptor = "Default";
-                        end
                         if ~isfield(screenData, "useGuvcview")
                             screenData.useGuvcview = 0;
                         end
@@ -201,7 +196,6 @@ function formattedSetting = reformatSettings(settings)
             end
         end
     end
-
     % Is this incredibly janky? Yes, but this is needed to patch old
     % stimuli effectively :(
     if any([settings.edit1{1} ~= 'OFF', settings.edit2{1} ~= 'OFF', settings.edit3{1} ~= 'OFF', settings.edit4{1} ~= "OFF", settings.edit5{1} ~= "OFF"])
