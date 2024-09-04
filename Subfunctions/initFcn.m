@@ -11,13 +11,11 @@ function init = initFcn(Option)
 
 switch Option
     case 'InitChstimuli'
-        
         %data of main window
         layer = struct( ...
             'data',       [], ...
             'parameters', {'No parameter table in main window!'});
-    
-    
+
         init = struct( ...
             'name', {'Main'}, ...            
             'fileNameGui', {'main'}, ...            
@@ -26,8 +24,7 @@ switch Option
             'layers', layer, ...
             'targetBgColor', 255, ...
             'stimSettings', {0});
-%             'bgColor', 255, ...
-%              'beforeBgColor', 255, ... 
+
     case 'InitNavData'
         
         navData.fileName   = 'New Project'; %name of this current project
@@ -64,10 +61,8 @@ switch Option
         screenData.ifi           = 0;         %monitor frame length (measured)
         screenData.gamma         = 1;       %gamma value of monitor
         % New variables
-        screenData.recording     = 0;
         screenData.useGuvcview   = 1;
         screenData.useRotated    = 0;
-        screenData.videoAdaptor  = "Default";
         screenData.monitorHeight = 27.5;
         screenData.flyDistance   = 14;
         

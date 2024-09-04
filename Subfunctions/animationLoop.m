@@ -1,4 +1,4 @@
-function [skippedFrames, stimCancelled] = animationLoop(stimulus, screenData, userSettings, trialSubset, previewChoice)
+function [skippedFrames, stimCancelled] = animationLoop(stimulus, screenData, userSettings, trialSubset)
 %function skippedFrames = animationLoop(Stimulus, ScreenData, UserSettings, TrialSubset, video)
 % 
 % This functions runs the loop that draws the stimuli to the screen in
@@ -35,8 +35,6 @@ numRuns   = length(trialSubset);
 critInput = cell(numLayers,1);
 fcnDraw = cell(numLayers,1);
 
-navData = getappdata(0, 'navData');
-
 %Screen data
 %--------------------------------------------------------------------------
 % FIRST CHANGE THE BACKGROUND COLOR in ScreenData!!
@@ -50,7 +48,6 @@ S.wPtr          = screenData.wPtr;
 S.ifi           = screenData.ifi;
 S.flyPos        = screenData.flyPos;
 S.partial       = screenData.partial;
-S.recording     = screenData.recording;
 S.useGuvcview   = screenData.useGuvcview;
 S.monitorHeight = screenData.monitorHeight;
 S.triggerRGBon  = screenData.triggerRGBon;
@@ -59,7 +56,6 @@ S.triggerRGBoff = screenData.triggerRGBoff;
 S.bgColor       = screenData.bgColor; 
 
 NumSubframes = 1;
-video.FramesPerTrigger = Inf;
 
 fprintf('Calculating (might take some time if you have a starfield with many dots)... ');
 for z = 1:numLayers
@@ -146,46 +142,6 @@ fprintf('Done!\n');
 
 % RGB difference between each trigger frame
 triggerFlickOffset = 105;
-
-% Set up connection to cammera equipment
-if S.recording ~= 0 && S.useGuvcview ~= 1
-    % Create video object
-    if isfield(screenData, "webcamSettings")
-        video = videoinput(screenData.videoAdaptor, 1, ...
-            screenData.webcamSettings.videoFormat);
-    else
-        video = videoinput(screenData.videoAdaptor, 1);
-    end
-    % Set up location and filename
-    videoLocation = navData.saveDataPathName;
-    videoName = "recording1.mp4";
-    fullVideoName = fullfile(videoLocation, videoName);
-    
-    % Create and configure the video writer
-    logfile = VideoWriter(fullVideoName, "Motion JPEG AVI");
-    
-    % Configure the device to log to disk using the video writer
-    video.LoggingMode = "disk";
-    video.DiskLogger = logfile;
-    % Make sure camera records until we tell it to stop
-    video.FramesPerTrigger = Inf;
-end
-
-if S.recording ~= 0 && S.useGuvcview ~= 1 && screenData.videoAdaptor == "linuxvideo" && isfield(screenData, "webcamSettings")
-    % Apply all user selected camera settings
-    vidSrc = getselectedsource(video);
-    wcSettings = screenData.webcamSettings;
-    vidSrc.Brightness = wcSettings.Brightness;
-    vidSrc.Contrast = wcSettings.Contrast;
-    vidSrc.FrameRate = wcSettings.FrameRate;
-    vidSrc.HorizontalFlip = wcSettings.HorizontalFlip;
-    vidSrc.VerticalFlip = wcSettings.VerticalFlip;
-    vidSrc.PowerLineFrequency = wcSettings.PowerLineFrequency;
-    vidSrc.Saturation = wcSettings.Saturation;
-    vidSrc.Sharpness = wcSettings.Sharpness;
-    vidSrc.WhiteBalanceMode = wcSettings.WhiteBalanceMode;
-    video.ReturnedColorspace = wcSettings.ReturnedColorspace;
-end
 
 T.trialFrames = T.preStim + T.time + T.postStim + T.pause;
 T.maxTrialFrames = max(T.trialFrames,[],1);
@@ -295,11 +251,6 @@ Screen('FillRect', S.wPtr, S.triggerRGBoff, S.triggerPos); %trigger off
 
 vbl = Screen('Flip', S.wPtr);
 
-% Turn on camera and delay to account for stutters
-if S.recording ~= 0 && S.useGuvcview == 0
-    preview(video);
-end
-
 critSecStart = tic;
 
 drawTime = [];
@@ -312,13 +263,8 @@ for k=1:length(frameMatrix)
     n = 1;
     nd = 0;
     %Start recording video if desired
-    if S.recording ~= 0
-        switch S.useGuvcview
-            case 0
-                startCam(k,T.pause(z,:),1:length(frameMatrix), video);
-            case 1
-                startGuvcview(k,T.pause(z,:),1:length(frameMatrix));
-        end
+    if S.useGuvcview
+        startGuvcview(k,T.pause(z,:),1:length(frameMatrix));
     end
     % n = amount of elapsed frames
     while (n<=N)
@@ -362,20 +308,11 @@ for k=1:length(frameMatrix)
         else
             missedFrames = 0;
         end
-
-        if previewChoice == 1
-            drawnow 
-        end
         dataLog(k,nd).frameDelay = missedFrames;
         n = n+1+missedFrames;
     end
-    if S.recording ~= 0
-        switch S.useGuvcview
-            case 0
-                stopCam(k, T.pause(z,:), 1:length(frameMatrix), video);
-            case 1
-                stopGuvcview(k, T.pause(z,:), 1:length(frameMatrix));
-        end
+    if  S.useGuvcview
+        stopGuvcview(k, T.pause(z,:), 1:length(frameMatrix));
     end
 end
 
@@ -409,11 +346,6 @@ for z = 1:numLayers
     end
 end
 
-% Delete video object to release memory
-if S.recording ~= 0 && S.useGuvcview == 0
-    delete(video);
-end
-
 numTrials = size(dataLog,1);
 frames = zeros(numTrials,1);
 skippedFrames = zeros(numTrials,1);
@@ -428,8 +360,6 @@ for i=1:numTrials
                 (sum(dataLog(i,j).frames)>0)*dataLog(i,j).frameDelay;
         end
     end
-    %fprintf('%d %d\n',sum(length(arrayfun(@isempty,frameMatrix{i}(end,:)))), ...
-    %    frames(i)+skippedFrames(i));
 end
 
 fprintf('SUMMARY:\n');
@@ -468,7 +398,7 @@ if userSettings.saveParameters
            mkdir(fileName); 
     end
     concat = strcat(fileName, stimulus.name, '_', timeStart);
-    if S.recording == 1 && S.useGuvcview == 1
+    if S.useGuvcview == 1
         videopath = strcat(pathName, '/video/');
         if ~exist(videopath, 'dir')
                mkdir(videopath); 
@@ -477,7 +407,6 @@ if userSettings.saveParameters
         concat = regexprep(concat, ':', '_');
         movefile('capture.mp4',concat);
     end
-
 
     message = 'NOTE: STIMULUS PLAYED TO THE END';
     
@@ -510,52 +439,6 @@ end
 %Written By Chris Johnston - chris.johnstonaus@gmail.com 14/04/21
 % Function to start recording from webcam (Current Trial Number, 
 % trial pause times in frames, list of trials)
-function startCam(TRun, Pauset, Tlength, video) 
-
-if TRun <= length(Tlength)
-    nPause = Pauset(:,TRun); % Current trials Pause time in frames
-
-    if ((nPause == 0) && (TRun == 1)) % Checks if there is a pause and if it's the first trial
-            start(video); % Starts Recording
-    end
-    if(TRun > 1) % Runs if there is more than one trial
-        lPause = Pauset(:,TRun-1); % Gets previous trial time in frames
-        if((nPause == 0) && (lPause ~= 0)) % Checks if current frame time is 0 and if the last pause time was not 0
-            start(video); % Starts a recording
-        end
-    end
-end
-
-
-function stopCam(TRun, Pauset, Tlength, video)% Function to stop recording video from webcam (Current Trial Number, Current trial pause time in frames, list of trials,Time of Stimulus Start, Stimulus Name)
-if TRun <= length(Tlength) 
-    if(TRun ~= length(Tlength))
-        nPause = Pauset(:,TRun+1);
-    else
-        nPause = Pauset(:,TRun);
-    end  
-    if (nPause ~= 0)
-        disp('pause is more than 0, Ending Recording');
-        stop(video);
-        closepreview(video);
-        % Double check video has saved properly before moving on
-        while video.FramesAcquired ~= video.DiskLoggerFrameCount
-            pause(.1);
-        end
-    else
-        L = length(Tlength);
-        if(TRun == L)
-            disp('End of Trials, Ending Recording');
-            stop(video);
-            closepreview(video);
-            % Double check video has saved properly before moving on
-            while video.FramesAcquired ~= video.DiskLoggerFrameCount
-                pause(.1);
-            end
-        end
-    end
-end
-
 function startGuvcview(TRun, Pauset, Tlength) % Function to start recording from webcam (Current Trial Number, trial pause times in frames, list of trials)
 path = which('recordCam.sh');
 command = "bash " + path + " &"; % links to bash script that is used to start/stop recording

@@ -32,6 +32,11 @@ Version History
 4.X Updates
 ------------------------------------------------------------------------------------------
 
+4.2.2
+* Deprecated old functions that used matlab's image processing toolbox as it was found to be too slow and unoptimised for the purposes of this application
+* Minor bug fixes
+
+------------------------------------------------------------------------------------------
 4.2.1
 * Can now stop stimuli mid-way through experiments in case of errors via a new button in the main table GUI
 * Fixed issue where image and movie generation for stimuli was not working properly
