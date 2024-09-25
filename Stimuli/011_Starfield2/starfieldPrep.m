@@ -89,6 +89,7 @@ if any(maxSize > 255)
     too_big_msg = sprintf('Some dots may be too large to display with your setup, with the specified dot size. Use a dot size no larger than %1.2f to avoid this.\n', safe_size);
     msgbox(too_big_msg, 'Warning', 'warn');
     output = "TOOBIG";
+    return
 end
 
 
