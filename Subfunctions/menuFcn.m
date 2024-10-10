@@ -51,8 +51,11 @@ function menuFcn(Option)
             [fileName,pathName] = uigetfile(strcat(defaultFolder, '*.mat'));
             
             if fileName   % FileName == false if canceled
-                
-                load(strcat(pathName, fileName), 'chstimuli', 'navData', 'screenData');
+                % Cancel annoying warnings as we already have tests later
+                % on for correct data format
+                warning off
+                load(strcat(pathName, fileName), 'chstimuli', 'navData', 'screenData', 'stimulus', 'Stimulus', 'debugData'); %#ok<NASGU>
+                warning on
                 loadedFiles = who; %names of files currently in workspace.
                 %should probably be Option, chstimuli, navData, fileName,
                 %loadedFiles, screenData and pathName
@@ -60,7 +63,7 @@ function menuFcn(Option)
                 if find(ismember(loadedFiles, 'chstimuli') == 1) %everything ok
                     try
                         if isfield(chstimuli(2).layers(1).settings(1), 'box1')
-                            convertOldStimSettings(chstimuli);
+                            chstimuli = convertOldStimSettings(chstimuli);
                             disp("Old stimuli patched successfully")
                         end
                     catch ERR
@@ -79,8 +82,51 @@ function menuFcn(Option)
                             screenData.useGuvcview = 0;
                         end
                         setappdata(0, 'screenData' , screenData);
+                    else
+                        disp('did not load screenData as the screen is already in use!')
                     end
                     
+                elseif any(find(ismember(loadedFiles, 'stimulus') == 1)) || any(find(ismember(loadedFiles, 'Stimulus') == 1))
+                    % In this case, where the user is loading a single
+                    % parameter file, initialise just the single stimuli
+                    
+                    % Start by resolving annoying capitalisation issues >:(
+                    if any(find(ismember(loadedFiles, 'Stimulus') == 1))
+                        stimulus = Stimulus;
+                    end
+                    chstimuli = initFcn('InitChstimuli');
+                    chstimuli(2).layers = stimulus.layers;
+                    % Double check if we need to patch the stimuli
+                    if isfield(chstimuli(2).layers(1).settings(1), 'box1')
+                        chstimuli = convertOldStimSettings(chstimuli);
+                        disp("Old stimuli patched successfully")
+                    else
+                        for layer = 1:length(stimulus.layers)
+                            chstimuli(2).layers(layer).data = debugData.stimulus.layers(layer).data;
+                            chstimuli(2).layers(layer).parameters = debugData.stimulus.layers(layer).parameters;
+                        end
+                    end
+                    chstimuli(2).name = stimulus.name;
+                    chstimuli(2).fileNameGui = 'tableGui';
+                    chstimuli(2).settingsGui = 'settingsGui';
+                    chstimuli(2).hGui = 0;
+                    chstimuli(2).targetBgColor = stimulus.targetBgColor;
+                    chstimuli(2).stimSettings = 0;
+
+                    % Remember to save the app data!
+                    setappdata(0, 'chstimuli', chstimuli);
+                    % % And take out the screen settings used then
+                    % tempData = getappdata(0, 'screenData');
+                    % % Load old screen values if no screen is currently active
+                    % screenData = debugData.screenData;
+                    % if ~tempData.isInit
+                    %     if ~isfield(screenData, "useGuvcview")
+                    %         screenData.useGuvcview = 0;
+                    %     end
+                    %     setappdata(0, 'screenData' , screenData);
+                    % else
+                    %     disp('did not load screenData as the screen is already in use!')
+                    % end
                 else
                     disp('incorrect file');
                 end
@@ -167,16 +213,39 @@ end
 % stimuli framework. This function handles looping through all layers
 function patchedStim = convertOldStimSettings(chstimulus)
     disp("This stimulus was created prior to FlyFly 4.2, please wait as we update your stimulus for compatability.")
-    patchedStim = struct();
-    % Loop over all stims, layers, and settings (Not main waindow)
+    patchedStim = chstimulus(1);
+    % Loop over all stims, layers, and settings (excluding main waindow)
     for stim = 2:length(chstimulus)
         currentStim = chstimulus(stim);
         for layer = 1:length(currentStim.layers)
             currentLayer = currentStim.layers(layer);
             for setting = 1:length(currentLayer.settings)
+                % Patch the current settings file
                 currentSetting = currentLayer.settings(setting);
                 patchedStim(stim).layers(layer).settings(setting) = reformatSettings(currentSetting);
             end
+            % If there's a params file, convert it into the current 'data' format
+            if isfield(currentLayer, 'Param')
+                data = struct2cell(currentLayer.Param);
+                data = cell2mat(data);
+                data = squeeze(data);
+                patchedStim(stim).layers(layer).data = data;
+                patchedStim(stim).layers(layer).parameters = fieldnames(currentLayer.Param)'; 
+            else
+                patchedStim(stim).layers(layer).data = currentLayer.data;
+                patchedStim(stim).layers(layer).parameters = currentLayer.parameters;
+            end
+            % Carry over other important layer settings
+            patchedStim(stim).layers(layer).name    = currentLayer.name;
+            patchedStim(stim).layers(layer).fcnPrep = currentLayer.fcnPrep;
+            patchedStim(stim).layers(layer).fcnDraw = currentLayer.fcnDraw;
+            patchedStim(stim).layers(layer).impulse = currentLayer.impulse;
+            patchedStim(stim).fileNameGui = 'tableGui';
+            patchedStim(stim).settingsGui = 'settingsGui';
+            patchedStim(stim).hGui = 0;
+            patchedStim(stim).name = currentStim.name;
+            patchedStim(stim).targetBgColor = currentStim.targetBgColor;
+            patchedStim(stim).stimSettings = 0;
         end
     end
 end
