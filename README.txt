@@ -32,16 +32,19 @@ Version History
 4.X Updates
 ------------------------------------------------------------------------------------------
 
+4.2.3
+* Significant bugfixes with loading and patching old stimuli settings
+* Added the functionality to load stimuli from parameter files (the .mat files saved after an experiment is run)
+* Improvements made to the tools used for saving stimuli as an image sequence or as a video, much more stable and less prone to crashing Matlab
+
 4.2.2
 * Deprecated old functions that used matlab's image processing toolbox as it was found to be too slow and unoptimised for the purposes of this application
 * Minor bug fixes
 
-------------------------------------------------------------------------------------------
 4.2.1
 * Can now stop stimuli mid-way through experiments in case of errors via a new button in the main table GUI
 * Fixed issue where image and movie generation for stimuli was not working properly
 
-------------------------------------------------------------------------------------------
 4.2 
 * Sweeping backend changes to increase readability and optimisation
 * Removed all references to GUIDE, app is fully contained in Matlab App Designer
@@ -52,7 +55,6 @@ Version History
 4.1.1 Hotfix
 * Added a temporary fix for stimuli settings not being initialised correctly in 'getLayer.m'
 
-------------------------------------------------------------------------------------------
 4.1
 
 * Added camera functionality to FlyFly; users can now select an option in the settings where if they have a camera connected, a video will start recording whilst the stimuli is being shown.

@@ -1,4 +1,4 @@
-function imageArray = getStimImages(Stimulus, ScreenData, ~, TrialSubset, fps)
+function outputName = getStimImages(Stimulus, ScreenData, ~, TrialSubset, fps, name, dir_name)
 %function imageArray = getStimImages(Stimulus, ScreenData, UserSettings,
 %TrialSubset, fps)
 %
@@ -101,6 +101,11 @@ triggerFlickOffset = 105;
 T.trialFrames = T.preStim + T.time + T.postStim + T.pause;
 T.maxTrialFrames = max(T.trialFrames,[],1);
 
+ID    = char(datetime);
+ID    = regexprep(ID, ':', '_'); %exchange ':' with '_'
+
+outputName = sprintf('%s %s',name,ID);
+
 fprintf('Building frame matrix... ');
 % Build frame matrix, this holds information on what layer frame to be
 % drawn for each "real" frame and/or if the trigger should be visible.
@@ -157,7 +162,6 @@ Screen('Flip', ScreenData.wPtr);
 
 % THIS IS INCREDIBLY JANKY AND NEEDS TO BE REVIEWED
 p = 1;
-imageArray = cell(1, length(frameMatrix));
 for k=1:length(frameMatrix)
     N = size(frameMatrix{k},2);
     n = 1;
@@ -174,7 +178,8 @@ for k=1:length(frameMatrix)
         if ScreenData.useRotated
             Screen('Flip', ScreenData.wPtr);
         end
-        imageArray{p} = Screen('GetImage', ScreenData.wPtr,[],'backBuffer');
+        currentFrame = Screen('GetImage', ScreenData.wPtr,[],'backBuffer');
+        imwrite(currentFrame, fullfile(dir_name,sprintf('%s %s_%05.f.png',name,ID,p)));
         
         % Set background color to 'white' (the 'clear' color)
         glClearColor(1,1,1, 0);

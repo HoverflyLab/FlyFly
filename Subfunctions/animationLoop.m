@@ -116,6 +116,13 @@ for z = 1:numLayers
     
     critInput{z} = fcnPrep(data, screenData, settings, NumSubframes);
 
+    if isstring(critInput{z}) 
+        if critInput{z} == "TOOBIG"
+            skippedFrames = 0;
+            stimCancelled = 1;
+            return
+        end
+    end
 %     % General mechanism for storing general-purpose data related to
 %     % the experiment that has been generated during preparation.
 %     % Such data can be included in the "extraData" field returned by
