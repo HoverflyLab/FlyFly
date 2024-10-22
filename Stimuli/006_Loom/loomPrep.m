@@ -100,7 +100,6 @@ for k = 1:numRuns
 end
 
 % critInput.RGB      = [0; 0; 0];
-
 % % the x and y components of the movement vector
 % delta_x = cos(P.angle*pi/180);
 % delta_y = -sin(P.angle*pi/180);

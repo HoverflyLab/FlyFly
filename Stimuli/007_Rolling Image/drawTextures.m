@@ -9,7 +9,7 @@ function drawTextures(wPtr, texture, textureRects, angle, offsetY)
 % Jonas Henriksson, 2010                                   info@flyfly.se
 %--------------------------------------------------------------------------
 
-[tmp, C, tmp] = size(textureRects);
+[~, C, ~] = size(textureRects);
 
 if C == 1
     
