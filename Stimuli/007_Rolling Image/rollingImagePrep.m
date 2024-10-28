@@ -37,15 +37,15 @@ critInput.images = [];
 
 for k = 1:numRuns
     
-    imPath        = StimSettings(k).path1{2};
-    keepOffset(k) = StimSettings(k).box1{2};
+    imPath        = StimSettings(k).path{2};
+    keepOffset(k) = StimSettings(k).box{1}{2};
     
-    if StimSettings(k).box3{2} && k==1
+    if StimSettings(k).box{3}{2} && k==1
         % Generate bar image
-        x = str2num(StimSettings(k).edit1{2});
-        y = str2num(StimSettings(k).edit2{2});
+        x = str2num(StimSettings(k).edit{1}{2});
+        y = str2num(StimSettings(k).edit{2}{2});
         imRect(:,k) = [0 0 x y]';
-        if ~StimSettings(k).box4{2}
+        if ~StimSettings(k).box{4}{2}
             I = generateBarStimImage(x,y);
             critInput.images{k} = I(1,:);
         else
