@@ -134,8 +134,8 @@ for z = 1:numLayers
     % save image data if using rolling image with auto generated image
     if strncmp(name, 'rollingImage', length('rollingImage'))
         for k=1:length(settings)
-            if ((strcmp(name(13),'P') && settings(k).box3{2}==1) || ...
-                (strcmp(name(13),'M') && settings(k).box4{2}==1))
+            if ((strcmp(name(13),'P') && settings(k).box{3}{2}==1) || ...
+                (strcmp(name(13),'M') && settings(k).box{4}{2}==1))
                 stimulus.layers(z).images = critInput{z}.images;
                 critInput{z} = rmfield(critInput{z},'images');
                 break;
