@@ -52,10 +52,20 @@ switch Action
                     screenPartial(3) = screenPartial(4);
                     screenPartial(4) = temp;
                 end
-                [wPtr,~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, screenPartial, ...
+                [wPtr1, ~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, screenPartial, ...
                     [], [], [], [], kPsychNeedFastOffscreenWindows);
+            elseif screenData.useSplitScreen
+                splitSize = screenPartial;
+                splitSize(3) = splitSize(3) / 2;
+                [wPtr1, ~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, splitSize, ...
+                    [], [], [], [], kPsychNeedFastOffscreenWindows);
+                splitSize = screenPartial;
+                splitSize(1) = (splitSize(3) / 2);
+                [wPtr2, ~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, splitSize, ...
+                    [], [], [], [], kPsychNeedFastOffscreenWindows);
+                screenData.wPtr2 = wPtr2;
             else
-                [wPtr,~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, ...
+                [wPtr1,~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, ...
                     [], [], [], [], [], kPsychNeedFastOffscreenWindows);%fullscreen
             end
 
@@ -66,16 +76,16 @@ switch Action
             disp(['Gamma table loaded with γ=' num2str(screenData.gamma)]);
             disp('If this value is incorrect, kill screen and change it');
 
-            screenData.hz     = Screen('FrameRate', wPtr);
-            screenData.ifi    = Screen('GetFlipInterval', wPtr);   % Estimate monitor flip interval
+            screenData.hz     = Screen('FrameRate', wPtr1);
+            screenData.ifi    = Screen('GetFlipInterval', wPtr1);   % Estimate monitor flip interval
             
             screenData.isInit         = 1;
             screenData.inUse          = 0;
             screenData.screenOldlevel = oldLevel;
-            screenData.wPtr           = wPtr;      %pointer to screen
+            screenData.wPtr           = wPtr1;      %pointer to screen
             
-            Screen('FillRect', wPtr, screenData.triggerRGBoff, screenData.triggerPos); %trigger off
-            Screen('Flip', wPtr);
+            Screen('FillRect', wPtr1, screenData.triggerRGBoff, screenData.triggerPos); %trigger off
+            Screen('Flip', wPtr1);
             
             setappdata(0, 'screenData', screenData);
             
@@ -166,12 +176,12 @@ switch Action
         flyPos(1)     = screenData.flyPos(1);
         flyPos(2)     = screenData.flyPos(2);
         
-        wPtr = screenData.wPtr;
+        wPtr1 = screenData.wPtr;
         partial = screenData.partial;
         
-        Screen('DrawLine', wPtr, [200 200 200], 0, flyPos(2), partial(3), flyPos(2));
-        Screen('DrawLine', wPtr, [200 200 200], flyPos(1), 0, flyPos(1), partial(4));
-        Screen('FillOval', wPtr, [200 200 200], [flyPos(1)-3  flyPos(2)-3  flyPos(1)+3  flyPos(2)+3]);
+        Screen('DrawLine', wPtr1, [200 200 200], 0, flyPos(2), partial(3), flyPos(2));
+        Screen('DrawLine', wPtr1, [200 200 200], flyPos(1), 0, flyPos(1), partial(4));
+        Screen('FillOval', wPtr1, [200 200 200], [flyPos(1)-3  flyPos(2)-3  flyPos(1)+3  flyPos(2)+3]);
         Screen('FillRect', screenData.wPtr, screenData.triggerRGBoff, screenData.triggerPos); %trigger off
         Screen(screenData.wPtr, 'Flip');
         

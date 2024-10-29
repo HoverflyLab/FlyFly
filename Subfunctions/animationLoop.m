@@ -45,6 +45,9 @@ fcnDraw = cell(numLayers,1);
 S.triggerPos    = screenData.triggerPos;
 S.monitorHz     = screenData.hz;
 S.wPtr          = screenData.wPtr;
+if isfield(screenData, 'wPtr2')
+    S.wPtr2     = screenData.wPtr2;
+end
 S.ifi           = screenData.ifi;
 S.flyPos        = screenData.flyPos;
 S.partial       = screenData.partial;
@@ -195,6 +198,9 @@ dataLog = repmat(dataLog,numRuns,K);
 
 % Draw to all the RGBA channels (normal mode)
 Screen('BlendFunction', S.wPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, [1 1 1 1]);
+if isfield(S, 'wPtr2')
+    Screen('BlendFunction', S.wPtr2, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, [1 1 1 1]);
+end
 
 newPrio = MaxPriority(S.wPtr); %Find max prio of screen
 Priority(newPrio);             %Set max prio
@@ -244,9 +250,12 @@ if userSettings.saveParameters
 end
 %--------------------------------------------------------------------------
 
-%Run through draw functions once to load them into memory
+% Run through draw functions once to load them into memory
 for z = 1:numLayers
     [~] = fcnDraw{z}(S.wPtr, 1, 1, 0, critInput{z});
+    if z == 2
+        [~] = fcnDraw{z}(S.wPtr2, 1, 1, 0, critInput{z});
+    end
 end
 
 
@@ -257,6 +266,9 @@ Screen('FillRect', S.wPtr, S.triggerRGBoff, S.triggerPos); %trigger off
 %--------------------------------------------------------------------------
 
 vbl = Screen('Flip', S.wPtr);
+if isfield(S, 'wPtr2')
+    Screen('Flip', S.wPtr2);
+end
 
 critSecStart = tic;
 
@@ -292,14 +304,22 @@ for k=1:length(frameMatrix)
                     arg_n = frameMatrix{k}(z,n);
                 end
                 critInput{z} = fcnDraw{z}(S.wPtr, arg_n, k, screenData.ifi, critInput{z});
+                if z == 2
+                    critInput{z} = fcnDraw{z}(S.wPtr2, arg_n, k, screenData.ifi, critInput{z});
+                end
             end
         end
         Screen('FillRect', S.wPtr, frameMatrix{k}(end,n), S.triggerPos);
         Screen('DrawingFinished',S.wPtr);  % supposedly speeds up performance
-        
+        if isfield(S, 'wPtr2')
+            Screen('DrawingFinished',S.wPtr2);
+        end
         drawTime = [drawTime; toc]; %#ok<AGROW> When this loop ends depends on hardware, can't pre-allocate space for this
         
         [vbl, ~, ~, missed, ~] = Screen('Flip', S.wPtr, vbl+(0.7)*S.ifi);
+        if isfield(S, 'wPtr2')
+            Screen('Flip', S.wPtr2, vbl+(0.7)*S.ifi);
+        end
         
         nd = nd+1;
         tStamp = toc(critSecStart);
@@ -334,6 +354,12 @@ Screen('FillRect', S.wPtr, S.bgColor);
 Screen('FillRect', S.wPtr, S.triggerRGBoff, S.triggerPos); %trigger off
 Screen('DrawingFinished',S.wPtr);
 Screen('Flip', S.wPtr, vbl+(0.7)*S.ifi);
+if isfield(S, 'wPtr2')
+    Screen('FillRect', S.wPtr2, S.bgColor);
+    Screen('FillRect', S.wPtr2, S.triggerRGBoff, S.triggerPos); %trigger off
+    Screen('DrawingFinished',S.wPtr2);
+    Screen('Flip', S.wPtr2, vbl+(0.7)*S.ifi);
+end
 
 Priority(0); % Set normal priority
 %----------------------------------------------------------------------
