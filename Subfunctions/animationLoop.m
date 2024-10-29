@@ -267,6 +267,7 @@ Screen('FillRect', S.wPtr, S.triggerRGBoff, S.triggerPos); %trigger off
 
 vbl = Screen('Flip', S.wPtr);
 if isfield(S, 'wPtr2')
+    Screen('FillRect', S.wPtr2, S.bgColor); %fill with required background colour
     Screen('Flip', S.wPtr2);
 end
 
@@ -303,22 +304,25 @@ for k=1:length(frameMatrix)
                 else
                     arg_n = frameMatrix{k}(z,n);
                 end
-                critInput{z} = fcnDraw{z}(S.wPtr, arg_n, k, screenData.ifi, critInput{z});
+                if z == 1
+                    critInput{z} = fcnDraw{z}(S.wPtr, arg_n, k, screenData.ifi, critInput{z});
+                end
                 if z == 2
+                    Screen('FillRect', S.wPtr2, S.bgColor); % This is needed to prevent frame smearing in stimuli
                     critInput{z} = fcnDraw{z}(S.wPtr2, arg_n, k, screenData.ifi, critInput{z});
                 end
             end
         end
         Screen('FillRect', S.wPtr, frameMatrix{k}(end,n), S.triggerPos);
-        Screen('DrawingFinished',S.wPtr);  % supposedly speeds up performance
+        Screen('DrawingFinished', S.wPtr);  % supposedly speeds up performance
         if isfield(S, 'wPtr2')
             Screen('DrawingFinished',S.wPtr2);
         end
         drawTime = [drawTime; toc]; %#ok<AGROW> When this loop ends depends on hardware, can't pre-allocate space for this
         
-        [vbl, ~, ~, missed, ~] = Screen('Flip', S.wPtr, vbl+(0.7)*S.ifi);
+        [vbl, ~, ~, missed, ~] = Screen('Flip', S.wPtr, vbl+(0.7)*S.ifi*2, [], [], 2);
         if isfield(S, 'wPtr2')
-            Screen('Flip', S.wPtr2, vbl+(0.7)*S.ifi);
+            %Screen('Flip', S.wPtr2, vbl+(0.7)*S.ifi/2);
         end
         
         nd = nd+1;
