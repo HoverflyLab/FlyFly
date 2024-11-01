@@ -54,7 +54,7 @@ function menuFcn(Option)
                 % Cancel annoying warnings as we already have tests later
                 % on for correct data format
                 warning off
-                load(strcat(pathName, fileName), 'chstimuli', 'navData', 'screenData', 'stimulus', 'Stimulus', 'debugData'); %#ok<NASGU>
+                load(strcat(pathName, fileName), 'chstimuli', 'navData', 'screenData', 'stimulus', 'Stimulus', 'debugData');
                 warning on
                 loadedFiles = who; %names of files currently in workspace.
                 %should probably be Option, chstimuli, navData, fileName,
@@ -70,14 +70,19 @@ function menuFcn(Option)
                         disp("Layer settings issue, see below. Skipping patching")
                         rethrow(ERR)
                     end
+
+                    % Check if user has a pre-4.0 stimulus
+                    if isfield(screenData, 'useSplitScreen')
+                        screenData.useSplitScreen = 0;
+                        screenData.splitDir       = "Vertically";
+                        screenData.splitPos       = 320;
+                    end
                     
                     setappdata(0, 'chstimuli', chstimuli);
                     setappdata(0, 'navData'  , navData);
                     
-                    tempData = getappdata(0, 'screenData');
-                    
                     % Load old screen values if no screen is currently active
-                    if ~tempData.isInit
+                    if ~screenData.isInit
                         if ~isfield(screenData, "useGuvcview")
                             screenData.useGuvcview = 0;
                         end

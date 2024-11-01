@@ -47,6 +47,26 @@ switch Action
 
             %use screenPartial for a non full screen
             if screenData.usePartial
+                % Initialise two different screens with different sizes
+                splitSize = screenPartial;
+                if screenData.splitDir == "Vertically"
+                    splitSize(3) = splitSize(3) / 2;
+                else
+                    splitSize(4) = splitSize(4) / 2;
+                end
+                [wPtr1, ~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, splitSize, ...
+                    [], [], [], [], kPsychNeedFastOffscreenWindows);
+                splitSize = screenPartial;
+                if screenData.splitDir == "Vertically"
+                    splitSize(1) = (splitSize(3) / 2);
+                else
+                    splitSize(2) = (splitSize(4) / 2);
+                end
+                [wPtr2, ~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, splitSize, ...
+                    [], [], [], [], kPsychNeedFastOffscreenWindows);
+                screenData.wPtr2 = wPtr2;
+                
+            elseif screenData.useSplitScreen
                 if screenData.useRotated
                     temp = screenPartial(3);
                     screenPartial(3) = screenPartial(4);
@@ -54,16 +74,6 @@ switch Action
                 end
                 [wPtr1, ~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, screenPartial, ...
                     [], [], [], [], kPsychNeedFastOffscreenWindows);
-            elseif screenData.useSplitScreen
-                splitSize = screenPartial;
-                splitSize(3) = splitSize(3) / 2;
-                [wPtr1, ~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, splitSize, ...
-                    [], [], [], [], kPsychNeedFastOffscreenWindows);
-                splitSize = screenPartial;
-                splitSize(1) = (splitSize(3) / 2);
-                [wPtr2, ~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, splitSize, ...
-                    [], [], [], [], kPsychNeedFastOffscreenWindows);
-                screenData.wPtr2 = wPtr2;
             else
                 [wPtr1,~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, ...
                     [], [], [], [], [], kPsychNeedFastOffscreenWindows);%fullscreen
