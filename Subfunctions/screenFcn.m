@@ -46,27 +46,41 @@ switch Action
             InitializeMatlabOpenGL;
 
             %use screenPartial for a non full screen
-            if screenData.usePartial
+            if screenData.useSplitScreen
+                % This disables the red flashing screen when vert sync
+                % issues occur. Uncomment if having issues
+                % Screen('Preference', 'SkipSyncTests', 1);
+                % Screen('Preference','VisualDebugLevel', 0);
+                % Check the user does not pick an impossible split position
+                if screenData.splitDir == "Vertically"
+                    sizeTest = screenPartial(3);
+                else
+                    sizeTest = screenPartial(4);
+                end
+                if screenData.splitPos > sizeTest
+                    disp("Screen not initialized, split pixel outside bounds")
+                    return
+                end
                 % Initialise two different screens with different sizes
                 splitSize = screenPartial;
                 if screenData.splitDir == "Vertically"
-                    splitSize(3) = splitSize(3) / 2;
+                    splitSize(3) = screenData.splitPos;
                 else
-                    splitSize(4) = splitSize(4) / 2;
+                    splitSize(4) = screenData.splitPos;
                 end
                 [wPtr1, ~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, splitSize, ...
                     [], [], [], [], kPsychNeedFastOffscreenWindows);
                 splitSize = screenPartial;
                 if screenData.splitDir == "Vertically"
-                    splitSize(1) = (splitSize(3) / 2);
+                    splitSize(1) = screenData.splitPos;
                 else
-                    splitSize(2) = (splitSize(4) / 2);
+                    splitSize(2) = screenData.splitPos;
                 end
                 [wPtr2, ~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, splitSize, ...
                     [], [], [], [], kPsychNeedFastOffscreenWindows);
                 screenData.wPtr2 = wPtr2;
                 
-            elseif screenData.useSplitScreen
+            elseif screenData.usePartial
                 if screenData.useRotated
                     temp = screenPartial(3);
                     screenPartial(3) = screenPartial(4);
