@@ -76,6 +76,7 @@ function menuFcn(Option)
                         screenData.useSplitScreen = 0;
                         screenData.splitDir       = "Vertically";
                         screenData.splitPos       = 320;
+                        screenData.backgroundInit = 0;
                     end
                     
                     setappdata(0, 'chstimuli', chstimuli);

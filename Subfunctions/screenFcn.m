@@ -29,6 +29,8 @@ switch Action
         %Screen
         screenPartial = screenData.partial;
         screenNumber  = screenData.screenNumber;
+        % Var to track if split screen is being used
+        screenData.isSplit = 0;
 
         % Check if recording video data
         useGuv       = screenData.useGuvcview;
@@ -79,7 +81,7 @@ switch Action
                 [wPtr2, ~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, splitSize, ...
                     [], [], [], [], kPsychNeedFastOffscreenWindows);
                 screenData.wPtr2 = wPtr2;
-                
+                screenData.isSplit = 1;
             elseif screenData.usePartial
                 if screenData.useRotated
                     temp = screenPartial(3);
@@ -129,7 +131,12 @@ switch Action
             Screen('LoadNormalizedGammaTable', screenData.wPtr, gammatable);
             
             %Closing
-            Screen('CloseAll');                                      %Close Screen
+            if screenData.isSplit == 0
+                Screen('Close', screenData.wPtr)                         %Close Screen
+            else
+                Screen('Close', screenData.wPtr)
+                Screen('Close', screenData.wPtr2)
+            end
             Screen('Preference', 'Verbosity', screenData.oldlevel);  %Enable warnings
         catch
             disp("No screen to close, resetting appData")
@@ -169,7 +176,7 @@ switch Action
             y = 0;
             Screen('TextSize', screenData.wPtr, 7);
             while y < partial(4) %rows
-                
+                S
                 x = 0;
                 while x < partial(3) %cols
                     Screen('DrawText', screenData.wPtr, ['(' num2str(x) ',' num2str(y) ')'], x, y);
@@ -210,7 +217,31 @@ switch Action
         Screen(screenData.wPtr, 'Flip');
         
         disp(['Fly mark one: ' num2str(flyPos(1)) 'x, ' num2str(flyPos(2)) 'y']);
+
+    case 'initBackground'
+        %Screen
+        screenPartial = screenData.partial;
+        screenNumber  = screenData.screenNumber;
+
+        [bPtr, ~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, screenPartial, ...
+            [], [], [], [], kPsychNeedFastOffscreenWindows);
+
+        screenData.backgroundInit = 1;
+        screenData.bPtr           = bPtr; % Pointer to background
         
+        setappdata(0, 'screenData', screenData);
+        
+        disp('Background Initialized');
+
+    case 'closeBackground'
+        try
+            Screen('Close', screenData.bPtr)
+            disp('Background Closed');
+        catch
+            disp("Issue closing background, resetting screenData!")
+        end
+        screenData.backgroundInit = 0;
+        setappdata(0, 'screenData', screenData);
     otherwise
         disp(['screenFcn: Incorrect Action string (' Action ')']);
 end

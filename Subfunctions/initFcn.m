@@ -64,6 +64,7 @@ switch Option
         screenData.useGuvcview    = 1;
         screenData.useRotated     = 0;
         screenData.useSplitScreen = 0;
+        screenData.backgroundInit = 0;
         screenData.splitDir       = "Vertically";
         screenData.splitPos       = 320;
         screenData.monitorHeight  = 27.5;
