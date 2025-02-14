@@ -78,6 +78,9 @@ function menuFcn(Option)
                     
                     % Load old screen values if no screen is currently active
                     if ~tempData.isInit
+                        if ~isfield(screenData, "useRotated")
+                            screenData.useRotated = 0;
+                        end
                         if ~isfield(screenData, "useGuvcview")
                             screenData.useGuvcview = 0;
                         end
@@ -267,7 +270,7 @@ function formattedSetting = reformatSettings(settings)
     end
     % Is this incredibly janky? Yes, but this is needed to patch old
     % stimuli effectively :(
-    if any([settings.edit1{1} ~= 'OFF', settings.edit2{1} ~= 'OFF', settings.edit3{1} ~= 'OFF', settings.edit4{1} ~= "OFF", settings.edit5{1} ~= "OFF"])
+    if any([convertCharsToStrings(settings.edit1{1}) ~= "OFF", convertCharsToStrings(settings.edit2{1}) ~= "OFF", convertCharsToStrings(settings.edit3{1}) ~= "OFF", convertCharsToStrings(settings.edit4{1}) ~= "OFF", convertCharsToStrings(settings.edit5{1}) ~= "OFF"])
         position = 1;
         for index = 1:5
             if eval("settings.edit" + num2str(index) + "{1}") ~=  "OFF"
