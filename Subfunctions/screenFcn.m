@@ -26,7 +26,7 @@ end
 
 switch Action
     case 'Init'
-        %Screen
+        % Screen
         screenPartial = screenData.partial;
         screenNumber  = screenData.screenNumber;
         % Var to track if split screen is being used
@@ -35,7 +35,7 @@ switch Action
         % Check if recording video data
         useGuv       = screenData.useGuvcview;
 
-        %If required by user, rotate screen 90 degrees
+        % If required by user, rotate screen 90 degrees
         if screenData.useRotated == 1
             PsychImaging('PrepareConfiguration');
             PsychImaging('AddTask', 'General', 'UseDisplayRotation', -90);
@@ -219,7 +219,7 @@ switch Action
         disp(['Fly mark one: ' num2str(flyPos(1)) 'x, ' num2str(flyPos(2)) 'y']);
 
     case 'initBackground'
-        %Screen
+        % Screen
         screenPartial = screenData.partial;
         screenNumber  = screenData.screenNumber;
 

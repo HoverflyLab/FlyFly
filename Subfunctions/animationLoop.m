@@ -45,7 +45,7 @@ fcnDraw = cell(numLayers,1);
 S.triggerPos    = screenData.triggerPos;
 S.monitorHz     = screenData.hz;
 S.wPtr          = screenData.wPtr;
-if isfield(screenData, 'wPtr2')
+if screenData.useSplitScreen
     S.wPtr2     = screenData.wPtr2;
 end
 S.ifi           = screenData.ifi;
@@ -252,8 +252,9 @@ end
 
 % Run through draw functions once to load them into memory
 for z = 1:numLayers
-    [~] = fcnDraw{z}(S.wPtr, 1, 1, 0, critInput{z});
-    if z == 2
+    if stimulus.layers(z).splitChoice == 1
+        [~] = fcnDraw{z}(S.wPtr, 1, 1, 0, critInput{z});
+    else
         [~] = fcnDraw{z}(S.wPtr2, 1, 1, 0, critInput{z});
     end
 end
@@ -266,7 +267,7 @@ Screen('FillRect', S.wPtr, S.triggerRGBoff, S.triggerPos); %trigger off
 %--------------------------------------------------------------------------
 
 vbl = Screen('Flip', S.wPtr);
-if isfield(S, 'wPtr2')
+if screenData.useSplitScreen
     Screen('FillRect', S.wPtr2, S.bgColor); %fill with required background colour
     Screen('Flip', S.wPtr2);
 end
@@ -304,10 +305,9 @@ for k=1:length(frameMatrix)
                 else
                     arg_n = frameMatrix{k}(z,n);
                 end
-                if z == 1
+                if stimulus.layers(z).splitChoice == 1
                     critInput{z} = fcnDraw{z}(S.wPtr, arg_n, k, screenData.ifi, critInput{z});
-                end
-                if z == 2
+                else
                     Screen('FillRect', S.wPtr2, S.bgColor); % This is needed to prevent frame smearing in stimuli
                     critInput{z} = fcnDraw{z}(S.wPtr2, arg_n, k, screenData.ifi, critInput{z});
                 end
@@ -315,15 +315,15 @@ for k=1:length(frameMatrix)
         end
         Screen('FillRect', S.wPtr, frameMatrix{k}(end,n), S.triggerPos);
         Screen('DrawingFinished', S.wPtr);  % supposedly speeds up performance
-        if isfield(S, 'wPtr2')
+        if screenData.useSplitScreen
             Screen('DrawingFinished',S.wPtr2);
         end
         drawTime = [drawTime; toc]; %#ok<AGROW> When this loop ends depends on hardware, can't pre-allocate space for this
         
         [vbl, ~, ~, missed, ~] = Screen('Flip', S.wPtr, vbl+(0.7)*S.ifi*2, [], [], 2);
-        if isfield(S, 'wPtr2')
-            %Screen('Flip', S.wPtr2, vbl+(0.7)*S.ifi/2);
-        end
+        % if isfield(S, 'wPtr2')
+        %     %Screen('Flip', S.wPtr2, vbl+(0.7)*S.ifi/2);
+        % end
         
         nd = nd+1;
         tStamp = toc(critSecStart);
