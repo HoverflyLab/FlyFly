@@ -52,6 +52,7 @@ switch Action
                 % issues occur. Uncomment if having issues
                 % Screen('Preference', 'SkipSyncTests', 1);
                 % Screen('Preference','VisualDebugLevel', 0);
+                
                 % Check the user does not pick an impossible split position
                 if screenData.splitDir == "Vertically"
                     sizeTest = screenPartial(3);
@@ -81,7 +82,7 @@ switch Action
                     [], [], [], [], kPsychNeedFastOffscreenWindows);
                 screenData.wPtr2 = wPtr2;
                 screenData.isSplit = 1;
-            elseif screenData.usePartial
+            elseif screenData.usePartial % If not using a split screen setup, init a single screen
                 if screenData.useRotated
                     temp = screenPartial(3);
                     screenPartial(3) = screenPartial(4);
