@@ -44,7 +44,6 @@ switch Action
         AssertOpenGL; %Check if openGL is available
         try
             oldLevel = Screen('Preference', 'Verbosity', 1); % 1 = critical errors only
-            
             InitializeMatlabOpenGL;
 
             %use screenPartial for a non full screen
@@ -176,7 +175,6 @@ switch Action
             y = 0;
             Screen('TextSize', screenData.wPtr, 7);
             while y < partial(4) %rows
-                S
                 x = 0;
                 while x < partial(3) %cols
                     Screen('DrawText', screenData.wPtr, ['(' num2str(x) ',' num2str(y) ')'], x, y);

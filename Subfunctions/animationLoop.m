@@ -252,7 +252,7 @@ end
 
 % Run through draw functions once to load them into memory
 for z = 1:numLayers
-    if stimulus.layers(z).splitChoice == 1
+    if ~screenData.useSplitScreen || stimulus.layers(z).splitChoice == 1
         [~] = fcnDraw{z}(S.wPtr, 1, 1, 0, critInput{z});
     else
         [~] = fcnDraw{z}(S.wPtr2, 1, 1, 0, critInput{z});
@@ -305,7 +305,7 @@ for k=1:length(frameMatrix)
                 else
                     arg_n = frameMatrix{k}(z,n);
                 end
-                if stimulus.layers(z).splitChoice == 1
+                if ~screenData.useSplitScreen || stimulus.layers(z).splitChoice == 1
                     critInput{z} = fcnDraw{z}(S.wPtr, arg_n, k, screenData.ifi, critInput{z});
                 else
                     Screen('FillRect', S.wPtr2, S.bgColor); % This is needed to prevent frame smearing in stimuli
@@ -320,10 +320,11 @@ for k=1:length(frameMatrix)
         end
         drawTime = [drawTime; toc]; %#ok<AGROW> When this loop ends depends on hardware, can't pre-allocate space for this
         
-        [vbl, ~, ~, missed, ~] = Screen('Flip', S.wPtr, vbl+(0.7)*S.ifi*2, [], [], 2);
-        % if isfield(S, 'wPtr2')
-        %     %Screen('Flip', S.wPtr2, vbl+(0.7)*S.ifi/2);
-        % end
+        if isfield(S, 'wPtr2') % Two PTB screen scenario
+            [vbl, ~, ~, missed, ~] = Screen('Flip', S.wPtr, vbl+(0.7)*S.ifi*2, [], [], 2);
+        else % One PTB screen scenario
+            [vbl, ~, ~, missed, ~] = Screen('Flip', S.wPtr, vbl+(0.7)*S.ifi);
+        end
         
         nd = nd+1;
         tStamp = toc(critSecStart);
