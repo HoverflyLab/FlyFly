@@ -72,7 +72,7 @@ function menuFcn(Option)
                     end
 
                     % Check if user has a pre-4.0 stimulus
-                    if isfield(screenData, 'useSplitScreen')
+                    if ~isfield(screenData, 'useSplitScreen')
                         screenData.useSplitScreen = 0;
                         screenData.splitDir       = "Vertically";
                         screenData.splitPos       = 320;

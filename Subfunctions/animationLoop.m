@@ -446,7 +446,7 @@ if userSettings.saveParameters
         movefile('capture.mp4',concat);
     end
 
-    message = 'NOTE: STIMULUS PLAYED TO THE END';
+    message = 'NOTE: Stimulus played until the end using FlyFly 4.3';
     
     try
         % Change capitalisation to keep consistent with lab scripts
