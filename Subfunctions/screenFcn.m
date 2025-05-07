@@ -26,14 +26,16 @@ end
 
 switch Action
     case 'Init'
-        %Screen
+        % Screen
         screenPartial = screenData.partial;
         screenNumber  = screenData.screenNumber;
+        % Var to track if split screen is being used
+        screenData.isSplit = 0;
 
         % Check if recording video data
         useGuv       = screenData.useGuvcview;
 
-        %If required by user, rotate screen 90 degrees
+        % If required by user, rotate screen 90 degrees
         if screenData.useRotated == 1
             PsychImaging('PrepareConfiguration');
             PsychImaging('AddTask', 'General', 'UseDisplayRotation', -90);
@@ -42,20 +44,54 @@ switch Action
         AssertOpenGL; %Check if openGL is available
         try
             oldLevel = Screen('Preference', 'Verbosity', 1); % 1 = critical errors only
-            
             InitializeMatlabOpenGL;
 
             %use screenPartial for a non full screen
-            if screenData.usePartial
+            if screenData.useSplitScreen
+                % This disables the red flashing screen when vert sync
+                % issues occur. Uncomment if having issues
+                % Screen('Preference', 'SkipSyncTests', 1);
+                % Screen('Preference','VisualDebugLevel', 0);
+                
+                % Check the user does not pick an impossible split position
+                if screenData.splitDir == "Vertically"
+                    sizeTest = screenPartial(3);
+                else
+                    sizeTest = screenPartial(4);
+                end
+                if screenData.splitPos > sizeTest
+                    disp("Screen not initialized, split pixel outside bounds")
+                    return
+                end
+                % Initialise two different screens with different sizes
+                splitSize = screenPartial;
+                if screenData.splitDir == "Vertically"
+                    splitSize(3) = screenData.splitPos;
+                else
+                    splitSize(4) = screenData.splitPos;
+                end
+                [wPtr1, ~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, splitSize, ...
+                    [], [], [], [], kPsychNeedFastOffscreenWindows);
+                splitSize = screenPartial;
+                if screenData.splitDir == "Vertically"
+                    splitSize(1) = screenData.splitPos;
+                else
+                    splitSize(2) = screenData.splitPos;
+                end
+                [wPtr2, ~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, splitSize, ...
+                    [], [], [], [], kPsychNeedFastOffscreenWindows);
+                screenData.wPtr2 = wPtr2;
+                screenData.isSplit = 1;
+            elseif screenData.usePartial % If not using a split screen setup, init a single screen
                 if screenData.useRotated
                     temp = screenPartial(3);
                     screenPartial(3) = screenPartial(4);
                     screenPartial(4) = temp;
                 end
-                [wPtr,~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, screenPartial, ...
+                [wPtr1, ~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, screenPartial, ...
                     [], [], [], [], kPsychNeedFastOffscreenWindows);
             else
-                [wPtr,~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, ...
+                [wPtr1,~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, ...
                     [], [], [], [], [], kPsychNeedFastOffscreenWindows);%fullscreen
             end
 
@@ -66,16 +102,16 @@ switch Action
             disp(['Gamma table loaded with γ=' num2str(screenData.gamma)]);
             disp('If this value is incorrect, kill screen and change it');
 
-            screenData.hz     = Screen('FrameRate', wPtr);
-            screenData.ifi    = Screen('GetFlipInterval', wPtr);   % Estimate monitor flip interval
+            screenData.hz     = Screen('FrameRate', wPtr1);
+            screenData.ifi    = Screen('GetFlipInterval', wPtr1);   % Estimate monitor flip interval
             
             screenData.isInit         = 1;
             screenData.inUse          = 0;
             screenData.screenOldlevel = oldLevel;
-            screenData.wPtr           = wPtr;      %pointer to screen
+            screenData.wPtr           = wPtr1;      %pointer to screen
             
-            Screen('FillRect', wPtr, screenData.triggerRGBoff, screenData.triggerPos); %trigger off
-            Screen('Flip', wPtr);
+            Screen('FillRect', wPtr1, screenData.triggerRGBoff, screenData.triggerPos); %trigger off
+            Screen('Flip', wPtr1);
             
             setappdata(0, 'screenData', screenData);
             
@@ -95,7 +131,12 @@ switch Action
             Screen('LoadNormalizedGammaTable', screenData.wPtr, gammatable);
             
             %Closing
-            Screen('CloseAll');                                      %Close Screen
+            if screenData.isSplit == 0
+                Screen('Close', screenData.wPtr)                         %Close Screen
+            else
+                Screen('Close', screenData.wPtr)
+                Screen('Close', screenData.wPtr2)
+            end
             Screen('Preference', 'Verbosity', screenData.oldlevel);  %Enable warnings
         catch
             disp("No screen to close, resetting appData")
@@ -135,7 +176,6 @@ switch Action
             y = 0;
             Screen('TextSize', screenData.wPtr, 7);
             while y < partial(4) %rows
-                
                 x = 0;
                 while x < partial(3) %cols
                     Screen('DrawText', screenData.wPtr, ['(' num2str(x) ',' num2str(y) ')'], x, y);
@@ -166,17 +206,41 @@ switch Action
         flyPos(1)     = screenData.flyPos(1);
         flyPos(2)     = screenData.flyPos(2);
         
-        wPtr = screenData.wPtr;
+        wPtr1 = screenData.wPtr;
         partial = screenData.partial;
         
-        Screen('DrawLine', wPtr, [200 200 200], 0, flyPos(2), partial(3), flyPos(2));
-        Screen('DrawLine', wPtr, [200 200 200], flyPos(1), 0, flyPos(1), partial(4));
-        Screen('FillOval', wPtr, [200 200 200], [flyPos(1)-3  flyPos(2)-3  flyPos(1)+3  flyPos(2)+3]);
+        Screen('DrawLine', wPtr1, [200 200 200], 0, flyPos(2), partial(3), flyPos(2));
+        Screen('DrawLine', wPtr1, [200 200 200], flyPos(1), 0, flyPos(1), partial(4));
+        Screen('FillOval', wPtr1, [200 200 200], [flyPos(1)-3  flyPos(2)-3  flyPos(1)+3  flyPos(2)+3]);
         Screen('FillRect', screenData.wPtr, screenData.triggerRGBoff, screenData.triggerPos); %trigger off
         Screen(screenData.wPtr, 'Flip');
         
         disp(['Fly mark one: ' num2str(flyPos(1)) 'x, ' num2str(flyPos(2)) 'y']);
+
+    case 'initBackground'
+        % Screen
+        screenPartial = screenData.partial;
+        screenNumber  = screenData.screenNumber;
+
+        [bPtr, ~] = PsychImaging('OpenWindow', screenNumber, chstimuli(index).targetBgColor, screenPartial, ...
+            [], [], [], [], kPsychNeedFastOffscreenWindows);
+
+        screenData.backgroundInit = 1;
+        screenData.bPtr           = bPtr; % Pointer to background
         
+        setappdata(0, 'screenData', screenData);
+        
+        disp('Background Initialized');
+
+    case 'closeBackground'
+        try
+            Screen('Close', screenData.bPtr)
+            disp('Background Closed');
+        catch
+            disp("Issue closing background, resetting screenData!")
+        end
+        screenData.backgroundInit = 0;
+        setappdata(0, 'screenData', screenData);
     otherwise
         disp(['screenFcn: Incorrect Action string (' Action ')']);
 end

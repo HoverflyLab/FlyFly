@@ -45,6 +45,9 @@ fcnDraw = cell(numLayers,1);
 S.triggerPos    = screenData.triggerPos;
 S.monitorHz     = screenData.hz;
 S.wPtr          = screenData.wPtr;
+if screenData.useSplitScreen
+    S.wPtr2     = screenData.wPtr2;
+end
 S.ifi           = screenData.ifi;
 S.flyPos        = screenData.flyPos;
 S.partial       = screenData.partial;
@@ -195,6 +198,9 @@ dataLog = repmat(dataLog,numRuns,K);
 
 % Draw to all the RGBA channels (normal mode)
 Screen('BlendFunction', S.wPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, [1 1 1 1]);
+if isfield(S, 'wPtr2')
+    Screen('BlendFunction', S.wPtr2, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, [1 1 1 1]);
+end
 
 newPrio = MaxPriority(S.wPtr); %Find max prio of screen
 Priority(newPrio);             %Set max prio
@@ -244,9 +250,13 @@ if userSettings.saveParameters
 end
 %--------------------------------------------------------------------------
 
-%Run through draw functions once to load them into memory
+% Run through draw functions once to load them into memory
 for z = 1:numLayers
-    [~] = fcnDraw{z}(S.wPtr, 1, 1, 0, critInput{z});
+    if ~screenData.useSplitScreen || stimulus.layers(z).splitChoice == 1
+        [~] = fcnDraw{z}(S.wPtr, 1, 1, 0, critInput{z});
+    else
+        [~] = fcnDraw{z}(S.wPtr2, 1, 1, 0, critInput{z});
+    end
 end
 
 
@@ -257,6 +267,10 @@ Screen('FillRect', S.wPtr, S.triggerRGBoff, S.triggerPos); %trigger off
 %--------------------------------------------------------------------------
 
 vbl = Screen('Flip', S.wPtr);
+if screenData.useSplitScreen
+    Screen('FillRect', S.wPtr2, S.bgColor); %fill with required background colour
+    Screen('Flip', S.wPtr2);
+end
 
 critSecStart = tic;
 
@@ -291,15 +305,26 @@ for k=1:length(frameMatrix)
                 else
                     arg_n = frameMatrix{k}(z,n);
                 end
-                critInput{z} = fcnDraw{z}(S.wPtr, arg_n, k, screenData.ifi, critInput{z});
+                if ~screenData.useSplitScreen || stimulus.layers(z).splitChoice == 1
+                    critInput{z} = fcnDraw{z}(S.wPtr, arg_n, k, screenData.ifi, critInput{z});
+                else
+                    Screen('FillRect', S.wPtr2, S.bgColor); % This is needed to prevent frame smearing in stimuli
+                    critInput{z} = fcnDraw{z}(S.wPtr2, arg_n, k, screenData.ifi, critInput{z});
+                end
             end
         end
         Screen('FillRect', S.wPtr, frameMatrix{k}(end,n), S.triggerPos);
-        Screen('DrawingFinished',S.wPtr);  % supposedly speeds up performance
-        
+        Screen('DrawingFinished', S.wPtr);  % supposedly speeds up performance
+        if screenData.useSplitScreen
+            Screen('DrawingFinished',S.wPtr2);
+        end
         drawTime = [drawTime; toc]; %#ok<AGROW> When this loop ends depends on hardware, can't pre-allocate space for this
         
-        [vbl, ~, ~, missed, ~] = Screen('Flip', S.wPtr, vbl+(0.7)*S.ifi);
+        if isfield(S, 'wPtr2') % Two PTB screen scenario
+            [vbl, ~, ~, missed, ~] = Screen('Flip', S.wPtr, vbl+(0.7)*S.ifi*2, [], [], 2);
+        else % One PTB screen scenario
+            [vbl, ~, ~, missed, ~] = Screen('Flip', S.wPtr, vbl+(0.7)*S.ifi);
+        end
         
         nd = nd+1;
         tStamp = toc(critSecStart);
@@ -334,6 +359,12 @@ Screen('FillRect', S.wPtr, S.bgColor);
 Screen('FillRect', S.wPtr, S.triggerRGBoff, S.triggerPos); %trigger off
 Screen('DrawingFinished',S.wPtr);
 Screen('Flip', S.wPtr, vbl+(0.7)*S.ifi);
+if isfield(S, 'wPtr2')
+    Screen('FillRect', S.wPtr2, S.bgColor);
+    Screen('FillRect', S.wPtr2, S.triggerRGBoff, S.triggerPos); %trigger off
+    Screen('DrawingFinished',S.wPtr2);
+    Screen('Flip', S.wPtr2, vbl+(0.7)*S.ifi);
+end
 
 Priority(0); % Set normal priority
 %----------------------------------------------------------------------
@@ -415,7 +446,7 @@ if userSettings.saveParameters
         movefile('capture.mp4',concat);
     end
 
-    message = 'NOTE: STIMULUS PLAYED TO THE END';
+    message = 'NOTE: Stimulus played until the end using FlyFly 4.3';
     
     try
         % Change capitalisation to keep consistent with lab scripts

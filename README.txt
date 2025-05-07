@@ -32,6 +32,11 @@ Version History
 4.X Updates
 ------------------------------------------------------------------------------------------
 
+4.3
+* Added experimental feature to run two PTB screens side by side (split screen)
+* Added feature to initialise a background to match the background colour of the main stimuli, so bg colour is made when stimulus window fails or is closed
+* Minor QOL features and misc. bug fixes
+
 4.2.3
 * Significant bugfixes with loading and patching old stimuli settings
 * Added the functionality to load stimuli from parameter files (the .mat files saved after an experiment is run)
@@ -72,7 +77,7 @@ Version History
 * New numbered version as due to sweeping compatability changes that allows Flyfly to run on modern software
 * Made Flyfly compatible with MATLAB 2018a up to release 2023b
 * Updated documentation for install guide to keep in line with modern versions of PsychToolbox as the old installation method has been deprecated
-* Migrated the Flyfly GUI from GUIDE to App Designer, to ensure support for the GUI is maintained in future MATLAB releases
+* Migrated the Flyfly GUI from GUIDE to App Designer, to ensure support for the GUI is maintainable in future MATLAB releases
 * NOTE: As the GUI is now running on App Designer, the user must use MATLAB 2018a or later for Flyfly to work
 
 ------------------------------------------------------------------------------------------
