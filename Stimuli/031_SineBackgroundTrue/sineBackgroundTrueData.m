@@ -1,20 +1,20 @@
-function layerData = sineBackgroundData()
+function layerData = sineBackgroundTrueData()
     % Handles to the functions in this folder
-    fcnPrep = @sineBackgroundPrep;
-    fcnDraw = @sineBackgroundDraw;
+    fcnPrep = @sineBackgroundTruePrep;
+    fcnDraw = @sineBackgroundTrueDraw;
 
-    settingNames = {'Temporal Freq', 'Contrast'}; 
+    settingNames = {'Wavelength', 'Temporal Freq', 'PatchHeight', ...
+                    'patchWidth', 'Patch Xpos', 'Patch Ypos', 'Contrast'};
+    
     % Data corresponds to the above setting names
-    settingDefaults = [2; 1];
+    settingDefaults = [ 20; 2; 200; 200; 100; 100; 1];
     % Defaults for timing
     timingData = [60; 0; 0; 0];
     % Needed for layer settings manager to work
     settings.global = 1;
 
-    
-
     layerData = struct(...
-    'name',       'Sine Background', ...
+    'name',       'Sine Background True', ...
     'fcnPrep',    fcnPrep, ...
     'fcnDraw',    fcnDraw, ...
     'parameters', {[settingNames, {'Time', 'PauseTime', 'PreStimTime', 'PostStimTime'}]}, ...
