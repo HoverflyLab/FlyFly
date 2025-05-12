@@ -1,4 +1,4 @@
-function [critInput] = sineBackgroundPrep(Parameters, ScreenData, ~, NumSubframes)
+function [critInput] = sineBackgroundPrep(Parameters, ScreenData, ~, ~)
 %
 %  Prepares input parameters for sineGratingDraw
 
@@ -7,11 +7,6 @@ function [critInput] = sineBackgroundPrep(Parameters, ScreenData, ~, NumSubframe
 %
 % Jonas Henriksson, 2010                                   info@flyfly.se
 %--------------------------------------------------------------------------
-
-% If we are missing length of trial, default to one frame.
-if nargin<4
-    NumSubframes = 1;
-end
 
 % How many trials are we needing?
 [~, numRuns] = size(Parameters);
@@ -23,6 +18,10 @@ params.freq        = Parameters(1,:);
 params.contrast    = Parameters(2,:);
 params.trialLength = Parameters(3,:);
 
+white = WhiteIndex(ScreenData.screenNumber);
+black = BlackIndex(ScreenData.screenNumber);
+gray  = (white+black) / 2;
+
 % Loop over all trials of experiment
 for run = 1:numRuns
     % Init array of shade values for each frame
@@ -32,7 +31,7 @@ for run = 1:numRuns
         % This equation generates a shade from a sine wave, centered around the gray band.
         % The equation factors in contrast from gray, temporal frequency, and the 
         % frame rate of the current monitor
-        shade = (255 * params.contrast(run) * (sin(2 * pi * params.freq(run) * frame / ScreenData.ifi) / 2)) + 127.5;
+        shade = (white * params.contrast(run) * (sin(2 * pi * params.freq(run) * frame / ScreenData.ifi) / 2)) + gray;
         sineBackground(frame, :) = [shade shade shade]; % Throwing so much shade, woah shit!! :O
     end
     critInput.rgb{run} = sineBackground;
