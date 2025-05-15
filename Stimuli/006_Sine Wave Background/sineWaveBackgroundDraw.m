@@ -1,4 +1,4 @@
-function Parameters = sineBackgroundDraw(wPtr, n, k, ~, Parameters)
+function Parameters = sineWaveBackgroundDraw(wPtr, n, k, ~, Parameters)
 %function out = sineGratingDraw(wPtr, n, k, Parameters, out)
 %
 % Fills window with a changing shade that matches a sinusoidal wave
@@ -10,4 +10,4 @@ function Parameters = sineBackgroundDraw(wPtr, n, k, ~, Parameters)
 % Jonas Henriksson, 2010                                   info@flyfly.se
 %--------------------------------------------------------------------------
 
-Screen('Fillrect', wPtr, Parameters.rgb{k}(n, :));
+Screen('Fillrect', wPtr, Parameters.rgb{k}(n, :), Parameters.dstRect(:,k));

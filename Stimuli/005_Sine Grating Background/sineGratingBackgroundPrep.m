@@ -1,4 +1,4 @@
-function [critInput] = sineBackgroundTruePrep(Parameters, ScreenData, ~, NumSubframes)
+function [critInput] = sineGratingBackgroundPrep(Parameters, ScreenData, ~, NumSubframes)
 %
 %  Prepares input parameters for sineGratingDraw
 
@@ -37,6 +37,7 @@ newTex       = 1;
 
 texX = P.patchWidth  / 2;
 texY = P.patchHeight / 2;
+
 
 % xAdd and yAdd say how much extra needs to be added onto x and y dims
 % to make it work
@@ -87,12 +88,15 @@ for k = 1:numRuns
     end
     textureIndex(k) = index;
     newTex = 1;
+    % Calculate what the position of the rectangle should be
+    
 end
 
 pixelsPerFrame = P.wavelength.*P.freq *ScreenData.ifi;
 
-critInput.texture = texture;
-
+critInput.texture        = texture;
+critInput.dstRect        = [P.patchXpos - texX; P.patchYpos - texY; ...
+                            P.patchXpos + texX; P.patchYpos + texY ];
 critInput.pixelsPerFrame = pixelsPerFrame;
 critInput.wavelength     = P.wavelength;
 critInput.textureIndex   = textureIndex;

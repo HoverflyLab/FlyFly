@@ -1,4 +1,4 @@
-function Parameters = sineBackgroundTrueDraw(wPtr, n, k, ~, Parameters)
+function Parameters = sineGratingBackgroundDraw(wPtr, n, k, ~, Parameters)
 %function out = sineGratingDraw(wPtr, n, k, Parameters, out)
 %
 % Fills window with a changing shade that matches a sinusoidal wave
@@ -21,4 +21,4 @@ currentColour = currentTexture(mod(floor(Parameters.pixelsPerFrame*(n - 1)) + Pa
 % Put it into shade recogniseable by PTB3
 currentShade = [currentColour currentColour currentColour];
 % Display the shade on the screen.
-Screen('Fillrect', wPtr, currentShade);
+Screen('Fillrect', wPtr, currentShade, Parameters.dstRect(:,k));
