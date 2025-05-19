@@ -59,7 +59,7 @@ for k = 1:numRuns
 
     steps = linspace(0, DIST_ANGLE*pi/180, P.steps(k)+1);
     steps = steps(1:end-1);
-    if ~StimSettings(k).box{1}{2} %use clockwise
+    if ~StimSettings(k).box{1}{2} % Use clockwise
         tmp = angleRad(k) + steps;
     else
         tmp = angleRad(k) - steps;

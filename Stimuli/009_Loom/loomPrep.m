@@ -12,16 +12,16 @@ if nargin<4
     NumSubframes = 1;
 end
 
-P.L       = Parameters(1,:);
-P.V      = Parameters(2,:);
-P.xpos        = Parameters(3,:);
-P.ypos        = Parameters(4,:);
-P.stop_size    = Parameters(5,:);
-P.loom_frames    = Parameters(6,:);
-P.bright1       = Parameters(7,:);
-P.bright2  = Parameters(8,:);
-P.frames_per_cycle  = Parameters(9,:);
-P.t           = Parameters(10,:)*NumSubframes;
+P.L                = Parameters(1,:);
+P.V                = Parameters(2,:);
+P.xpos             = Parameters(3,:);
+P.ypos             = Parameters(4,:);
+P.stop_size        = Parameters(5,:);
+P.loom_frames      = Parameters(6,:);
+P.bright1          = Parameters(7,:);
+P.bright2          = Parameters(8,:);
+P.frames_per_cycle = Parameters(9,:);
+P.t                = Parameters(10,:)*NumSubframes;
 numRuns = size(Parameters,2);
 
 texturePtr = cell(1, numRuns);

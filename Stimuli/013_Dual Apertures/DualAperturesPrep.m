@@ -48,14 +48,14 @@ for k = 1:C
 
     aperture(k) = Screen('OpenOffscreenwindow', ScreenData.wPtr, [P.bright1(k) P.bright1(k) P.bright1(k) P.gamma1(k)]);
     
-    if StimSettings(k).box1{2} == 1
+    if StimSettings(k).box{1}{2} == 1
         Screen('FillRect', aperture(k), [P.bright2(k) P.bright2(k) P.bright2(k) P.gamma2(k)], objRect);
     else
         %red
         Screen('FillOval', aperture(k), [P.bright2(k) P.bright2(k) P.bright2(k) P.gamma2(k)], objRect);
     end
     
-    if StimSettings(k).box2{2} == 1
+    if StimSettings(k).box{2}{2} == 1
         Screen('FillRect', aperture(k), [P.bright2(k) P.bright2(k) P.bright2(k) P.gamma2(k)], objRect2);
     else
         %yellow

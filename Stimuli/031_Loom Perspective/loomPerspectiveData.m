@@ -1,4 +1,5 @@
-function layerData = rectTargetData()
+% NOTE, THIS STIMULI IS A WIP AND HAS NOT BEEN COMPLETED
+function layerData = loomPerspectiveData()
     % Handles to the functions in this folder
     fcnPrep = @rectTargetPrep;
     fcnDraw = @rectTargetDraw;

@@ -1,4 +1,4 @@
-function critInput = whiteNoisePrep(Parameters, ScreenData, StimSettings, NumSubframes)
+function critInput = whiteNoisePrep(Parameters, ~, StimSettings, NumSubframes)
 %
 % Prepares input parameters for whiteNoiseDraw
 
@@ -12,7 +12,7 @@ if nargin<4
     NumSubframes = 1;
 end
 
-[R C] = size(Parameters);
+[~, C] = size(Parameters);
 
 P.height      = Parameters(1,:);
 P.width       = Parameters(2,:);
@@ -26,17 +26,17 @@ useY = zeros(1, C);
 
 for k = 1:C
     
-    if StimSettings(k).box1{2} %use x function
+    if StimSettings(k).box{1}{2} %use x function
         useX(k)    = 1;
-        xOffset{k} = StimSettings(k).edit1{2};
+        xOffset{k} = StimSettings(k).edit{1}{2};
     else
         useX(k) = 0;
         xOffset = '1';
     end
 
-    if StimSettings(k).box2{2} %use y function
+    if StimSettings(k).box{2}{2} %use y function
         useY(k)    = 1;
-        yOffset{k} = StimSettings(k).edit2{2};
+        yOffset{k} = StimSettings(k).edit{2}{2};
     else
         useY(k) = 0;
         yOffset = '1';

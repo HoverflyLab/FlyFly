@@ -24,7 +24,7 @@ P.contrast  = Parameters(7,:);
 numRuns = size(Parameters,2);
 
 for k = 1:numRuns
-    imagePath        = StimSettings(k).path1{2};
+    imagePath        = StimSettings(k).path{2};
     [I, ~, alpha] = imread(imagePath);
     I = double(I);
     I = P.contrast(k)*(I-127) + 127;

@@ -12,10 +12,10 @@ if nargin<4
     NumSubframes = 1;
 end
 
-[R C] = size(Parameters);
+[~, C] = size(Parameters);
 
 for k = 1:C
-    P.textString{k} = StimSettings(k).edit1{2};
+    P.textString{k} = StimSettings(k).edit{1}{2};
 end
 
 P.textSize   = Parameters(1,:);

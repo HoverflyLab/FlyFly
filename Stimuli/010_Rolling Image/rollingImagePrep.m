@@ -16,7 +16,7 @@ end
 [tmp, numRuns] = size(Parameters);
 
 P.speed       = Parameters(1,:)/NumSubframes;
-P.direction   = -Parameters(2,:);   % counter-clockwise rotation
+P.direction   =-Parameters(2,:); % counter-clockwise rotation
 P.xpos        = Parameters(3,:);
 P.ypos        = Parameters(4,:);
 P.height      = Parameters(5,:);

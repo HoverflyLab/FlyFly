@@ -25,7 +25,7 @@ p            = 1;
 
 for k = 1:numRuns
     
-    fileName = StimSettings(k).path1{2};
+    fileName = StimSettings(k).path{2};
     
     for n = 1:length(usedTextures)
         if strcmp(fileName, usedTextures{n})
@@ -59,7 +59,7 @@ for k = 1:numRuns
     textureIndex(k) = index;
     numFrames(k) = Z;
     
-    stretch = StimSettings(k).box1{2}; %true/false
+    stretch = StimSettings(k).box{1}{2}; %true/false
     if stretch
         dstRect(:,k) = [0; 0; ScreenData.partial(3); ScreenData.partial(4)];
     else

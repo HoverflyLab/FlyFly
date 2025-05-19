@@ -15,7 +15,7 @@ end
 
 [tmp, numRuns] = size(Parameters);
 
-P.direction   = -Parameters(1,:);   % counter-clockwise rotation
+P.direction   =-Parameters(1,:);   % counter-clockwise rotation
 P.xpos        = Parameters(2,:);
 P.ypos        = Parameters(3,:);
 P.height      = Parameters(4,:);
@@ -35,12 +35,12 @@ texture      = [];
 
 for k = 1:numRuns
     
-    if StimSettings(k).box4{2} && k==1
+    if StimSettings(k).box{4}{2} && k==1
         % Generate bar image
-        x = str2num(StimSettings(k).edit4{2});
-        y = str2num(StimSettings(k).edit5{2});
+        x = str2num(StimSettings(k).edit{4}{2});
+        y = str2num(StimSettings(k).edit{5}{2});
         imRect(:,k) = [0 0 x y]';
-        if ~StimSettings(k).box5{2}
+        if ~StimSettings(k).box{5}{2}
             I = generateBarStimImage(x,y);
             critInput.images{k} = I(1,:);
         else
@@ -52,7 +52,7 @@ for k = 1:numRuns
     else
         % Load image from file
 
-        imPath        = StimSettings(k).path1{2};
+        imPath        = StimSettings(k).path{2};
 
         for n = 1:length(usedTextures)
             if strcmp([imPath num2str(P.contrast(k))], usedTextures{n})
@@ -121,11 +121,11 @@ for k = 1:numRuns
     
     n=0;N=0;t=0;T=0;
     
-    if StimSettings(k).box1{2} %use x function
+    if StimSettings(k).box{1}{2} %use x function
         useOff(k) = 1;
-        values = eval(StimSettings(k).edit1{2});
+        values = eval(StimSettings(k).edit{1}{2});
         if length(values)==1
-            offset{k} = StimSettings(k).edit1{2};
+            offset{k} = StimSettings(k).edit{1}{2};
         else
             repeats = ceil(P.time/length(values));
             list = repmat(values,repeats,1);
@@ -136,11 +136,11 @@ for k = 1:numRuns
         offset    = '1';
     end
     
-    if StimSettings(k).box2{2} %use x function
+    if StimSettings(k).box{2}{2} %use x function
         useX(k) = 1;
-        values = eval(StimSettings(k).edit2{2});
+        values = eval(StimSettings(k).edit{2}{2});
         if length(values)==1
-            xOffset{k} = StimSettings(k).edit2{2};
+            xOffset{k} = StimSettings(k).edit{2}{2};
         else
             repeats = ceil(P.time/length(values));
             list = repmat(values,repeats,1);
@@ -151,11 +151,11 @@ for k = 1:numRuns
         xOffset = '1';
     end
 
-    if StimSettings(k).box3{2} %use y function
+    if StimSettings(k).box{3}{2} %use y function
         useY(k) = 1;
-        values = eval(StimSettings(k).edit3{2});
+        values = eval(StimSettings(k).edit{3}{2});
         if length(values)==1
-            yOffset{k} = StimSettings(k).edit3{2};
+            yOffset{k} = StimSettings(k).edit{3}{2};
         else
             repeats = ceil(P.time/length(values));
             list = repmat(values,repeats,1);
@@ -184,4 +184,3 @@ critInput.imRect       = imRect;
 critInput.position     = position;
 critInput.texture      = texture;
 critInput.textureIndex = textureIndex;
-

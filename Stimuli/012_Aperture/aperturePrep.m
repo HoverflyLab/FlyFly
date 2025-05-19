@@ -12,7 +12,7 @@ if nargin<4
     NumSubframes = 1;
 end
 
-[R C] = size(Parameters);
+[~, C] = size(Parameters);
 
 P.gamma1      = Parameters(1,:);
 P.gamma2      = Parameters(2,:);
@@ -31,7 +31,7 @@ for k = 1:C
     
     aperture(k) = Screen('OpenOffscreenwindow', ScreenData.wPtr, [0 0 0 P.gamma1(k)]);
     
-    if StimSettings(k).box1{2} == 1
+    if StimSettings(k).box{1}{2} == 1
         Screen('FillRect', aperture(k), [255 255 255 P.gamma2(k)], objRect);
     else
         Screen('FillOval', aperture(k), [255 255 255 P.gamma2(k)], objRect);
