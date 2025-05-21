@@ -44,7 +44,7 @@ yAdd = abs(P.wavelength.*sin(angleRad));
 
 white = WhiteIndex(ScreenData.screenNumber);
 black = BlackIndex(ScreenData.screenNumber);
-gray  = round((white+black)/2);
+gray  = (white+black)/2;
 inc   = white - gray;
 
 p = 1;

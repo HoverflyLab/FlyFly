@@ -19,7 +19,7 @@ P.xpos        = Parameters(3,:);
 P.ypos        = Parameters(4,:);
 P.velocity    = Parameters(5,:)/NumSubframes;
 P.angle       = Parameters(6,:);
-P.contrast  = Parameters(7,:);
+P.contrast    = Parameters(7,:);
 
 numRuns = size(Parameters,2);
 
@@ -35,7 +35,7 @@ for k = 1:numRuns
     
     texturePtr(k) = Screen('MakeTexture', ScreenData.wPtr, I);
     aratio = size(I,1)/size(I,2);
-    P.srcRect = [0; 0; size(I,1); size(I,2)]
+    P.srcRect = [0; 0; size(I,1); size(I,2)];
     if P.width(k) == 0
         if P.height(k) == 0
             P.height(k) = size(I, 1);
@@ -50,7 +50,7 @@ for k = 1:numRuns
             P.height(k) = min(P.height(k), P.width(k) * aratio);
             P.width(k) = P.height(k) / aratio;
         end
-    end;
+    end
 end
 
 % the x and y components of the movement vector

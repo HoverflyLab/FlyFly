@@ -32,6 +32,10 @@ Version History
 4.X Updates
 ------------------------------------------------------------------------------------------
 
+4.4
+* Added 3 new stimuli: 'Squarewave Grating', 'Sine Grating Background' and 'Sine Wave Background'
+* Fixed issue with some stimuli-specific settings causing crashes to PsychToolbox
+
 4.3
 * Added experimental feature to run two PTB screens side by side (split screen)
 * Added feature to initialise a background to match the background colour of the main stimuli, so bg colour is made when stimulus window fails or is closed
@@ -56,7 +60,6 @@ Version History
 * Completely redone how stimuli are handled in loading, instead of being a hardcoded list, stimuli are read and loaded dynamically based on the 'stimuli' folder
 * It is now much easier to add / remove stimuli from the load order
 
-------------------------------------------------------------------------------------------
 4.1.1 Hotfix
 * Added a temporary fix for stimuli settings not being initialised correctly in 'getLayer.m'
 
@@ -71,7 +74,6 @@ Version History
 * Consolidated fly gaze and fly position together
 * Various stability improvements, QOL features, and bug fixes from the matlab compatability patch
 
-------------------------------------------------------------------------------------------
 4.0
 
 * New numbered version as due to sweeping compatability changes that allows Flyfly to run on modern software
