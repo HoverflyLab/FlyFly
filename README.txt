@@ -34,6 +34,7 @@ Version History
 
 4.4
 * Added 3 new stimuli: 'Squarewave Grating', 'Sine Grating Background' and 'Sine Wave Background'
+* Changed naming of saved parameter files to make data merging easier
 * Fixed issue with some stimuli-specific settings causing crashes to PsychToolbox
 
 4.3
