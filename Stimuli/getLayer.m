@@ -11,16 +11,16 @@ stimDirectory = which('getLayer');
 stimDirectory = strsplit(stimDirectory, 'getLayer');
 stimDirectory = stimDirectory{1};
 
-fileNames = dir(fullfile(stimDirectory));
-fileNames = {fileNames.name}; % We only care about the names themselves
+folderNames = dir(fullfile(stimDirectory));
+folderNames = {folderNames.name}; % We only care about the names themselves
 
 % Loop over all file names to find stimuli folders, remove all other
 % names from the array
-stims = cell(1,length(fileNames));
-for name = 3:length(fileNames) % Start from 3 to ignore the hidden files '.' and '..'
+stims = cell(1,length(folderNames));
+for name = 3:length(folderNames) % Start from 3 to ignore the hidden files '.' and '..'
     % Check that the beginning of the file is a 3 digit number
-    if ~isnan(str2double(fileNames{name}(1:3)))
-        stims{name} = fileNames{name};
+    if ~isnan(str2double(folderNames{name}(1:3)))
+        stims{name} = folderNames{name};
     end
 end
 stims = stims(~cellfun('isempty', stims));
@@ -36,7 +36,7 @@ if layerName == "List"
 end
 
 % Search through all folders to grab the correct stimulus folder
-fin = cellfun(@(x) regexp(x, layerName), fileNames, 'UniformOutput', false);
+fin = cellfun(@(x) regexp(x, layerName), folderNames, 'UniformOutput', false);
 for index = 1:length(fin)
     if ~isempty(fin{index})
         chosenStim = index;
@@ -45,7 +45,7 @@ for index = 1:length(fin)
 end
 
 % Get a list of all files in the desired stimulus folder
-stimFiles = dir(fullfile([stimDirectory, fileNames{chosenStim}]));
+stimFiles = dir(fullfile([stimDirectory, folderNames{chosenStim}]));
 stimFiles = {stimFiles.name};
 
 % Search through the stimulus folder to grab the correct data script

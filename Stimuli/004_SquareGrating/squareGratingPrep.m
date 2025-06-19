@@ -1,5 +1,5 @@
-function [critInput] = sineGratingPrep(Parameters, ScreenData, ~, NumSubframes)
-%
+function [critInput] = squareGratingPrep(Parameters, ScreenData, StimSettings, NumSubframes)
+
 %  Prepares input parameters for sineGratingDraw
 
 %--------------------------------------------------------------------------
@@ -73,10 +73,18 @@ for k = 1:numRuns
         % a and b do the rotation
         a = cos(angleRad(k))*fRad(k);
         b = sin(angleRad(k))*fRad(k);
-        
+
+        % THIS NEEDS TO BE DONE TO PREVENT JAGGED LINES, AS EVEN A 
+        % FRACTION OF A NUMBER CAN APPLY A TINY ROTATION
+        if a < 0.0001 && a > -0.0001
+            a = 0;
+        end
+        if b < 0.0001 && b > -0.0001 
+            b = 0;
+        end
         % grating is bigger than it needs to be,
         % to accommodate stepping across the texture
-        grating = sin(a*x + b*y);
+        grating = square(a*x + b*y);
         grating = gray+inc*grating;
         grating = P.contrast(k)*(grating - gray) + gray;
         

@@ -189,7 +189,7 @@ end
 
 totalFrames = N;
 
-%Animation loop internal parameters
+% Animation loop internal parameters
 %--------------------------------------------------------------------------
 % Create struct and allocate memory for datalog
 K = max(T.maxTrialFrames(k));
@@ -205,7 +205,7 @@ end
 newPrio = MaxPriority(S.wPtr); %Find max prio of screen
 Priority(newPrio);             %Set max prio
 
-timeStart          = string(datetime('now')); %time as datestr
+timeStart          = string(datetime('now', 'Format', "y_MM_d@HH_mm_ss")); %time as datestr
 timeStartPrecision = string(datetime('now', 'Format', "dd-MMM-yyyy HH:mm:ss:SSS")); %exact time (ms precision) as time vector
 
 disp(' ');
@@ -232,7 +232,7 @@ if userSettings.saveParameters
     if ~exist(fileName, 'dir')
            mkdir(fileName); 
     end
-    concat = strcat(fileName, stimulus.name, '_', timeStart);
+    concat = strcat(fileName, timeStart, '_', stimulus.name);
     message    = 'NOTE: THIS RUN WAS ABORTED';
     
     % only save the parameters of the executed trial subset
@@ -435,13 +435,13 @@ if userSettings.saveParameters
     if ~exist(fileName, 'dir')
            mkdir(fileName); 
     end
-    concat = strcat(fileName, stimulus.name, '_', timeStart);
+    concat = strcat(fileName, timeStart, '_', stimulus.name);
     if S.useGuvcview == 1
         videopath = strcat(pathName, '/video/');
         if ~exist(videopath, 'dir')
                mkdir(videopath); 
         end
-        concat = strcat(videopath, stimulus.name, '_', timeStart, '.mp4');
+        concat = strcat(videopath, timeStart, '_', stimulus.name, '.mp4');
         concat = regexprep(concat, ':', '_');
         movefile('capture.mp4',concat);
     end

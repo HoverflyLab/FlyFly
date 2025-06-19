@@ -1,0 +1,23 @@
+function layerData = gridData()
+    % Handles to the functions in this folder
+    fcnPrep = @gridPrep;
+    fcnDraw = @gridDraw;
+
+    settingNames = {}; 
+    % Data corresponds to the above setting names
+    settingDefaults = [];
+    % Defaults for timing
+    timingData = [60; 0; 0; 0];
+    % Needed for layer settings manager to work
+    settings.global = 1;
+
+    
+
+    layerData = struct(...
+    'name',       'Grid', ...
+    'fcnPrep',    fcnPrep, ...
+    'fcnDraw',    fcnDraw, ...
+    'parameters', {[settingNames, {'Time', 'PauseTime', 'PreStimTime', 'PostStimTime'}]}, ...
+    'data',       [settingDefaults; timingData], ...
+    'settings',   settings, ...
+    'impulse',    false);

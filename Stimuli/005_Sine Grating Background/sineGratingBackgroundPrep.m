@@ -1,4 +1,4 @@
-function [critInput] = sineGratingPrep(Parameters, ScreenData, ~, NumSubframes)
+function [critInput] = sineGratingBackgroundPrep(Parameters, ScreenData, ~, NumSubframes)
 %
 %  Prepares input parameters for sineGratingDraw
 
@@ -8,6 +8,7 @@ function [critInput] = sineGratingPrep(Parameters, ScreenData, ~, NumSubframes)
 % Jonas Henriksson, 2010                                   info@flyfly.se
 %--------------------------------------------------------------------------
 
+% If we are missing length of trial, default to one frame.
 if nargin<4
     NumSubframes = 1;
 end
@@ -16,26 +17,27 @@ end
 
 P.wavelength  = Parameters(1,:);
 P.freq        = Parameters(2,:)/NumSubframes;
-P.angle       = Parameters(3,:);
-P.patchHeight = Parameters(4,:);
-P.patchWidth  = Parameters(5,:);
-P.patchXpos   = Parameters(6,:);
-P.patchYpos   = Parameters(7,:);
-P.contrast    = Parameters(8,:);
+P.patchHeight = Parameters(3,:);
+P.patchWidth  = Parameters(4,:);
+P.patchXpos   = Parameters(5,:);
+P.patchYpos   = Parameters(6,:);
+P.contrast    = Parameters(7,:);
 
-P.angle = flipAngleDeg(P.angle);
+% This is kept constant instead of a variable 
+P.angle = flipAngleDeg(0);
 
 angleRad = P.angle*pi/180;         % deg orientation.
 fRad     = 1./P.wavelength*2*pi;   % cycles/pixel
 
 % TEXTURE
 usedTextures = struct('contrast', [], 'wavelength', [], 'freq', [], 'angle', []);
-texture = [];
+texture = cell(1, numRuns);
 
 newTex       = 1;
 
 texX = P.patchWidth  / 2;
 texY = P.patchHeight / 2;
+
 
 % xAdd and yAdd say how much extra needs to be added onto x and y dims
 % to make it work
@@ -44,7 +46,7 @@ yAdd = abs(P.wavelength.*sin(angleRad));
 
 white = WhiteIndex(ScreenData.screenNumber);
 black = BlackIndex(ScreenData.screenNumber);
-gray  = (white+black)/2;
+gray  = round((white+black)/2);
 inc   = white - gray;
 
 p = 1;
@@ -74,30 +76,27 @@ for k = 1:numRuns
         a = cos(angleRad(k))*fRad(k);
         b = sin(angleRad(k))*fRad(k);
         
-        % grating is bigger than it needs to be,
-        % to accommodate stepping across the texture
+        % We create the grating just like in sineGrating stimuli
         grating = sin(a*x + b*y);
         grating = gray+inc*grating;
         grating = P.contrast(k)*(grating - gray) + gray;
-        
-        texture(p) = Screen('MakeTexture', ScreenData.wPtr, grating);
+        % Then we grab only the changes to the shade
+        texture{p} = grating(1, 1:P.wavelength(k));
         
         index = length(texture);
         p = p +1;
     end
     textureIndex(k) = index;
     newTex = 1;
+    % Calculate what the position of the rectangle should be
+    
 end
 
 pixelsPerFrame = P.wavelength.*P.freq *ScreenData.ifi;
 
-critInput.texture = texture;
-critInput.dstRect = [P.patchXpos - texX;             P.patchYpos - texY; ...
-    P.patchXpos + texX;  P.patchYpos + texY ];
-
-critInput.srcRect = [xAdd; yAdd; xAdd+P.patchWidth; yAdd+P.patchHeight];
-
+critInput.texture        = texture;
+critInput.dstRect        = [P.patchXpos - texX; P.patchYpos - texY; ...
+                            P.patchXpos + texX; P.patchYpos + texY ];
 critInput.pixelsPerFrame = pixelsPerFrame;
 critInput.wavelength     = P.wavelength;
-critInput.angle          = angleRad;
 critInput.textureIndex   = textureIndex;
