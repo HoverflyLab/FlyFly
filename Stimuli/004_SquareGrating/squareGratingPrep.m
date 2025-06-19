@@ -12,7 +12,7 @@ if nargin<4
     NumSubframes = 1;
 end
 
-[tmp, numRuns] = size(Parameters);
+[~, numRuns] = size(Parameters);
 
 P.wavelength  = Parameters(1,:);
 P.freq        = Parameters(2,:)/NumSubframes;
@@ -73,7 +73,15 @@ for k = 1:numRuns
         % a and b do the rotation
         a = cos(angleRad(k))*fRad(k);
         b = sin(angleRad(k))*fRad(k);
-        
+
+        % THIS NEEDS TO BE DONE TO PREVENT JAGGED LINES, AS EVEN A 
+        % FRACTION OF A NUMBER CAN APPLY A TINY ROTATION
+        if a < 0.0001 && a > -0.0001
+            a = 0;
+        end
+        if b < 0.0001 && b > -0.0001 
+            b = 0;
+        end
         % grating is bigger than it needs to be,
         % to accommodate stepping across the texture
         grating = square(a*x + b*y);
